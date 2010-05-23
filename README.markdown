@@ -10,11 +10,11 @@ This is pretty much NetRecorder without the fakeweb dependency.
 1. run tests
 2. all responses are saved to fixtures
 3. run tests
-4. Return the cached response if it exists and isn't out of date.
+4.  Return the cached response if it exists and isn't out of date.
 
-   If a cached response exists but is out of date, update it with the real response
+    If a cached response exists but is out of date, update it with the real response
 
-   Cache the response if it doesn't exist
+    Cache the response if it doesn't exist
 
 ## Usage
 
