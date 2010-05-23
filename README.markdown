@@ -5,6 +5,8 @@ _Save responses from webservices to give your tests a hint of reality._
 
 This is pretty much NetRecorder without the fakeweb dependency.
 
+## Premise
+
 1. run tests
 2. all responses are saved to fixtures
 3. run tests
@@ -14,6 +16,12 @@ This is pretty much NetRecorder without the fakeweb dependency.
 
    Cache the response if it doesn't exist
 
+## Usage
+
+`$ vi spec/spec_helper.rb`
+
+    require 'ephemeral_response'
+    EphemeralResponse.activate
 
 ## Note on Patches/Pull Requests
 
