@@ -8,6 +8,8 @@ require 'ephemeral_response/configuration'
 require 'ephemeral_response/fixture'
 
 module EphemeralResponse
+  VERSION = "0.0.0".freeze
+
   def self.activate
     Fixture.load_all
   end
