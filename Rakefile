@@ -5,9 +5,9 @@ begin
   require 'jeweler'
   Jeweler::Tasks.new do |gem|
     gem.name = "ephemeral_response"
-    gem.summary = %Q{Save responses from webservices to give your tests a hint of reality.}
+    gem.summary = %Q{Save HTTP responses to give your tests a hint of reality.}
     gem.description = %Q{
-    Save responses from webservices to give your tests a hint of reality.
+    Save HTTP responses to give your tests a hint of reality.
     Responses are saved into your fixtures directory and are used for subsequent web requests until they expire.
     }
     gem.email = "sandro.turriate@gmail.com"
