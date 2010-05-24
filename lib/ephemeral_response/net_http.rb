@@ -5,6 +5,7 @@ module Net
 
     def connect
     end
+    private :connect
 
     def generate_uri(request)
       scheme = use_ssl? ? "https" : "http"

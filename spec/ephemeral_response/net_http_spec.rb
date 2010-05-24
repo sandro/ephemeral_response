@@ -13,7 +13,7 @@ describe Net::HTTP do
 
   describe "#connect" do
     it "does nothing" do
-      subject.connect.should be_nil
+      subject.send(:connect).should be_nil
     end
   end
 

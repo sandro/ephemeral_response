@@ -9,4 +9,10 @@ Dir.glob("spec/support/*.rb") {|f| require f}
 Spec::Runner.configure do |config|
   config.include FakeFS::SpecHelpers
   config.include ClearFixtures
+  config.before(:each) do
+    EphemeralResponse.activate
+  end
+  config.after(:suite) do
+    EphemeralResponse.deactivate
+  end
 end

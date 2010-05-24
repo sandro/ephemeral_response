@@ -32,5 +32,22 @@ describe "Integrating with the net" do
       Net::HTTP.should_not_receive(:request_without_ephemeral_response)
       Net::HTTP.get(uri)
     end
+
+    context "Deactivation" do
+      it "doesn't create any fixtures" do
+        EphemeralResponse.deactivate
+        Net::HTTP.get(uri)
+        File.exists?(EphemeralResponse::Configuration.fixture_directory).should be_false
+      end
+
+      it "reactivates" do
+        EphemeralResponse.deactivate
+        Net::HTTP.get(uri)
+        File.exists?(EphemeralResponse::Configuration.fixture_directory).should be_false
+        EphemeralResponse.activate
+        Net::HTTP.get(uri)
+        File.exists?(EphemeralResponse::Configuration.fixture_directory).should be_true
+      end
+    end
   end
 end
