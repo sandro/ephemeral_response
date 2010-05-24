@@ -7,6 +7,12 @@ This is pretty much NetRecorder without the fakeweb dependency.
 
 ## Premise
 
+Web responses are volatile. Servers go down, API's change, responses change and
+everytime something changes, your tests should fail. Mocking out web responses
+may speed up your test suite but the tests essentially become lies. Ephemeral
+Response encourages you to run your tests against real web services but helps
+keep your test suite snappy by caching the responses and setting an expiry.
+
 1. run tests
 2. all responses are saved to fixtures
 3. run tests
@@ -18,7 +24,7 @@ This is pretty much NetRecorder without the fakeweb dependency.
 
 ## Usage
 
-`$ vi spec/spec_helper.rb`
+    $ vi spec/spec_helper.rb
 
     require 'ephemeral_response'
 
@@ -31,17 +37,26 @@ This is pretty much NetRecorder without the fakeweb dependency.
       end
     end
 
-### Configuration
-You can change the fixture directory which defaults to "spec/fixtures/ephemeral_response"
+    $ rake spec
 
-    EphemeralResponse::Configuration.fixture_directory = "test/fixtures/ephemeral_response"
+The responses are cached in yaml files within spec/fixtures/ephemeral\_response.
+
+I'd recommend git ignoring this directory to ensure your tests always hit the
+remote service at least once and to prevent credentials (like API keys) from
+being stored in your repo.
+
+### Configuration
+
+You can change the fixture directory which defaults to "spec/fixtures/ephemeral\_response"
+
+    EphemeralResponse::Configuration.fixture_directory = "test/fixtures/ephemeral\_response"
 
 You can change the elapsed time for when a fixture will expire; defaults to 24 hours
 
     EphemeralResponse::Configuration.expiration = 86400 # 24 hours in seconds
 
-You can also pass a block when setting expiration which gets instance_eval'd
-giving you access to the awesome helper method `one_day`
+You can also pass a block when setting expiration which gets instance\_eval'd
+giving you access to the awesome helper method `one\_day`
 
     EphemeralResponse::Configuration.expiration do
       one_day * 30 # 60 * 60 * 24 * 30
