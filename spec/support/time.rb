@@ -5,6 +5,7 @@ class Time
     def travel(travel_string)
       @travel_string = travel_string
       yield
+    ensure
       @travel_string = nil
     end
 
