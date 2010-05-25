@@ -2,8 +2,8 @@ class Time
   class << self
     alias now_without_travel now
 
-    def travel(travel_string)
-      @travel_string = travel_string
+    def travel(moment)
+      @travel_string = moment.to_s
       yield
     ensure
       @travel_string = nil
