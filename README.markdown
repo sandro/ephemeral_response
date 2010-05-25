@@ -58,7 +58,7 @@ You can change the elapsed time for when a fixture will expire; defaults to 24 h
 You can also pass a block when setting expiration which gets instance\_eval'd
 giving you access to the awesome helper method `one\_day`
 
-    EphemeralResponse::Configuration.expiration do
+    EphemeralResponse::Configuration.expiration = lambda do
       one_day * 30 # 60 * 60 * 24 * 30
     end
 
