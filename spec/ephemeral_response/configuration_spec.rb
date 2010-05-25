@@ -2,6 +2,9 @@ require 'spec_helper'
 
 describe EphemeralResponse::Configuration do
   subject { EphemeralResponse::Configuration }
+  after do
+    subject.expiration = lambda { one_day }
+  end
   describe "#fixture_directory" do
     it "has a default" do
       subject.fixture_directory.should == "spec/fixtures/ephemeral_response"
