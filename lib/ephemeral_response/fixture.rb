@@ -77,10 +77,6 @@ module EphemeralResponse
       File.join(Configuration.fixture_directory, file_name)
     end
 
-    def register
-      FakeWeb.register_uri(method, uri, :response => response)
-    end
-
     def save
       FileUtils.mkdir_p Configuration.fixture_directory
       File.open(path, 'w') do |f|
