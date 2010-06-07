@@ -18,7 +18,7 @@ module EphemeralResponse
     def self.load_all
       clear
       if File.directory?(Configuration.fixture_directory)
-        Dir.glob("#{Configuration.fixture_directory}/*.fixture", &method(:load_fixture))
+        Dir.glob("#{Configuration.fixture_directory}/*.yml", &method(:load_fixture))
       end
       fixtures
     end
@@ -87,7 +87,7 @@ module EphemeralResponse
     protected
 
     def generate_file_name
-      "#{normalized_name}_#{identifier}.fixture"
+      "#{normalized_name}_#{identifier}.yml"
     end
   end
 end

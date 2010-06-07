@@ -24,13 +24,13 @@ describe EphemeralResponse::Fixture do
       before do
         FileUtils.mkdir_p fixture_directory
         Dir.chdir(fixture_directory) do
-          FileUtils.touch %w(1.fixture 2.fixture)
+          FileUtils.touch %w(1.yml 2.yml)
         end
       end
 
       it "calls #load_fixture for each fixture file" do
-        EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{fixture_directory}/1.fixture")
-        EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{fixture_directory}/2.fixture")
+        EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{fixture_directory}/1.yml")
+        EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{fixture_directory}/2.yml")
         EphemeralResponse::Fixture.load_all
       end
     end
