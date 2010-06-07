@@ -10,8 +10,9 @@ This is pretty much NetRecorder without the fakeweb dependency.
 Web responses are volatile. Servers go down, API's change, responses change and
 everytime something changes, your tests should fail. Mocking out web responses
 may speed up your test suite but the tests essentially become lies. Ephemeral
-Response encourages you to run your tests against real web services but helps
-keep your test suite snappy by caching the responses and setting an expiry.
+Response encourages you to run your tests against real web services while
+keeping your test suite snappy by caching the responses and reusing them until
+they expire.
 
 1. run tests
 2. all responses are saved to fixtures
