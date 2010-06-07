@@ -80,4 +80,4 @@ giving you access to the awesome helper method `one\_day`
 
 ## Copyright
 
-Copyright (c) 2010 Sandro Turriate. See LICENSE for details.
+Copyright (c) 2010 Sandro Turriate. See MIT_LICENSE for details.
