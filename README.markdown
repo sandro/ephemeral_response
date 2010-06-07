@@ -62,6 +62,11 @@ giving you access to the awesome helper method `one\_day`
       one_day * 30 # 60 * 60 * 24 * 30
     end
 
+## Similar Projects
+* [Net Recorder](http://github.com/chrisyoung/netrecorder)
+* [Stalefish](http://github.com/jsmestad/stale_fish)
+* [VCR](http://github.com/myronmarston/vcr)
+
 ## Note on Patches/Pull Requests
 
 * Fork the project.
