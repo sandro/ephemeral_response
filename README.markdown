@@ -50,14 +50,14 @@ being stored in your repo.
 
 You can change the fixture directory which defaults to "spec/fixtures/ephemeral\_response"
 
-    EphemeralResponse::Configuration.fixture_directory = "test/fixtures/ephemeral\_response"
+    EphemeralResponse::Configuration.fixture_directory = "test/fixtures/ephemeral_response"
 
 You can change the elapsed time for when a fixture will expire; defaults to 24 hours
 
     EphemeralResponse::Configuration.expiration = 86400 # 24 hours in seconds
 
 You can also pass a block when setting expiration which gets instance\_eval'd
-giving you access to the awesome helper method `one\_day`
+giving you access to the awesome helper method `one_day`
 
     EphemeralResponse::Configuration.expiration = lambda do
       one_day * 30 # 60 * 60 * 24 * 30
