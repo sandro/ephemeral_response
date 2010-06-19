@@ -2,9 +2,7 @@ require 'spec_helper'
 
 describe EphemeralResponse::Configuration do
   subject { EphemeralResponse::Configuration }
-  after do
-    subject.expiration = lambda { one_day }
-  end
+
   describe "#fixture_directory" do
     it "has a default" do
       subject.fixture_directory.should == "spec/fixtures/ephemeral_response"
@@ -37,6 +35,20 @@ describe EphemeralResponse::Configuration do
           subject.expiration = lambda { "1 day" }
         end.to raise_exception(TypeError, "expiration must be expressed in seconds")
       end
+    end
+  end
+
+  describe "#reset" do
+    it "resets expiration and fixture directory to the defaults" do
+      subject.fixture_directory = "test/fixtures/ephemeral_response"
+      subject.expiration = 1
+      subject.fixture_directory.should == "test/fixtures/ephemeral_response"
+      subject.expiration.should == 1
+
+      subject.reset
+
+      subject.fixture_directory.should == subject.const_get(:DEFAULTS)[:fixture_directory]
+      subject.expiration.should == subject.const_get(:DEFAULTS)[:expiration].call
     end
   end
 end

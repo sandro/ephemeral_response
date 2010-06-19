@@ -4,8 +4,13 @@ module EphemeralResponse
 
     attr_writer :fixture_directory
 
+    DEFAULTS = {
+      :fixture_directory => "spec/fixtures/ephemeral_response",
+      :expiration => lambda { one_day }
+    }
+
     def fixture_directory
-      @fixture_directory || "spec/fixtures/ephemeral_response"
+      @fixture_directory || DEFAULTS[:fixture_directory]
     end
 
     def expiration=(expiration)
@@ -16,7 +21,12 @@ module EphemeralResponse
     end
 
     def expiration
-      @expiration || one_day
+      @expiration || DEFAULTS[:expiration]
+    end
+
+    def reset
+      self.expiration = DEFAULTS[:expiration]
+      self.fixture_directory = DEFAULTS[:fixture_directory]
     end
 
     protected
