@@ -10,6 +10,7 @@ Spec::Runner.configure do |config|
   config.include FakeFS::SpecHelpers
   config.include ClearFixtures
   config.before(:each) do
+    EphemeralResponse::Configuration.reset
     EphemeralResponse.activate
   end
   config.after(:suite) do
