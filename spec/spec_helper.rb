@@ -14,5 +14,6 @@ Spec::Runner.configure do |config|
   end
   config.after(:suite) do
     EphemeralResponse.deactivate
+    ClearFixtures.clear_fixtures
   end
 end
