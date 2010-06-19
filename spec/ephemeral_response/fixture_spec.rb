@@ -1,13 +1,12 @@
 require 'spec_helper'
 
 describe EphemeralResponse::Fixture do
-  let(:fixture_directory) { File.expand_path EphemeralResponse::Configuration.fixture_directory }
-  let(:uri) { URI.parse("http://example.com") }
-  let(:fixture) { EphemeralResponse::Fixture.new(uri, 'GET') { |f| f.response = "hello world"} }
+  include FakeFS::SpecHelpers
 
-  before do
-    clear_fixtures
-  end
+  let(:fixture_directory) { File.expand_path EphemeralResponse::Configuration.fixture_directory }
+  let(:request) { Net::HTTP::Get.new '/' }
+  let(:uri) { URI.parse("http://example.com/") }
+  let(:fixture) { EphemeralResponse::Fixture.new(uri, request) { |f| f.response = "hello world"} }
 
   describe ".load_all" do
     it "returns the empty fixtures hash when the fixture directory doesn't exist" do
@@ -71,25 +70,36 @@ describe EphemeralResponse::Fixture do
       it "returns the fixture response" do
         fixture.save
         EphemeralResponse::Fixture.load_all
-        response = EphemeralResponse::Fixture.respond_to(fixture.uri, fixture.method)
+        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request)
         response.should == "hello world"
       end
     end
 
     context "fixture not loaded" do
       it "sets the response to the block" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, fixture.method) do
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request) do
           "new response"
         end
         EphemeralResponse::Fixture.fixtures[fixture.identifier].response.should == "new response"
       end
 
       it "saves the fixture" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, fixture.method) do
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request) do
           "new response"
         end
         File.exists?(fixture.path).should be_true
       end
+    end
+  end
+
+  describe "#identifier" do
+    let(:request) { Net::HTTP::Get.new '/' }
+    let(:uri) { URI.parse "http://example.com/" }
+    subject { EphemeralResponse::Fixture.new uri, request }
+
+    it "hashes the full url with request yaml" do
+      hash = Digest::SHA1.hexdigest("#{uri}#{request.to_yaml}")
+      subject.identifier.should == hash
     end
   end
 end

@@ -1,7 +1,7 @@
 module EphemeralResponse
   class Fixture
     attr_accessor :response
-    attr_reader :method, :uri, :created_at
+    attr_reader :request, :uri, :created_at
 
     def self.fixtures
       @fixtures ||= {}
@@ -11,8 +11,8 @@ module EphemeralResponse
       @fixtures = {}
     end
 
-    def self.find(uri, method)
-      fixtures[Fixture.new(uri, method).identifier]
+    def self.find(uri, request)
+      fixtures[Fixture.new(uri, request).identifier]
     end
 
     def self.load_all
@@ -32,8 +32,8 @@ module EphemeralResponse
       end
     end
 
-    def self.respond_to(uri, method)
-      fixture = Fixture.new(uri, method)
+    def self.respond_to(uri, request)
+      fixture = Fixture.new(uri, request)
       unless fixtures[fixture.identifier]
         fixture.response = yield
         fixture.save
@@ -42,18 +42,21 @@ module EphemeralResponse
       fixtures[fixture.identifier].response
     end
 
-    def initialize(uri, method)
-      @method = method
-      @uri = uri
-      @uri.normalize!
+    def initialize(uri, request)
+      @uri = uri.normalize
+      @request = deep_clone request
       @created_at = Time.now
       yield self if block_given?
     end
 
     def ==(other)
-      %w(method uri created_at response).all? do |attribute|
+      %w(request_yaml uri created_at response).all? do |attribute|
         send(attribute) == other.send(attribute)
       end
+    end
+
+    def deep_clone(object)
+      Marshal.load(Marshal.dump(object))
     end
 
     def expired?
@@ -65,16 +68,27 @@ module EphemeralResponse
     end
 
     def identifier
-      Digest::SHA1.hexdigest(normalized_name)[0..6]
+      Digest::SHA1.hexdigest("#{uri}#{request_yaml}")
+    end
+
+    def method
+      request.method
     end
 
     def normalized_name
-      normalized_path = uri.path.gsub(/\/$/, '').gsub('/', '-')
-      [uri.host, method, normalized_path].join("_")
+      [uri.host, method, fs_path].join("_")
+    end
+
+    def fs_path
+      uri.path.gsub(/\/$/, '').gsub('/', '-')
     end
 
     def path
       File.join(Configuration.fixture_directory, file_name)
+    end
+
+    def request_yaml
+      request.to_yaml
     end
 
     def save
@@ -87,7 +101,7 @@ module EphemeralResponse
     protected
 
     def generate_file_name
-      "#{normalized_name}_#{identifier}.yml"
+      "#{normalized_name}_#{identifier[0..6]}.yml"
     end
   end
 end
