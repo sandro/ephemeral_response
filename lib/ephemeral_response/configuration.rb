@@ -6,7 +6,8 @@ module EphemeralResponse
 
     DEFAULTS = {
       :fixture_directory => "spec/fixtures/ephemeral_response",
-      :expiration => lambda { one_day }
+      :expiration => lambda { one_day },
+      :white_list => []
     }
 
     def fixture_directory
@@ -27,6 +28,15 @@ module EphemeralResponse
     def reset
       self.expiration = DEFAULTS[:expiration]
       self.fixture_directory = DEFAULTS[:fixture_directory]
+      self.white_list = DEFAULTS[:white_list]
+    end
+
+    def white_list
+      @white_list || DEFAULTS[:white_list]
+    end
+
+    def white_list=(*hosts)
+      @white_list = hosts.flatten
     end
 
     protected
