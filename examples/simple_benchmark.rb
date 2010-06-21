@@ -3,7 +3,7 @@ require 'rubygems'
 require 'lib/ephemeral_response'
 require 'benchmark'
 
-EphemeralResponse::Configuration.expiration = 1
+EphemeralResponse::Configuration.expiration = 5
 EphemeralResponse.activate
 
 # Run benchmarks against thefuckingweather.com

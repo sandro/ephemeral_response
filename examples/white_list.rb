@@ -5,7 +5,7 @@ require 'lib/ephemeral_response'
 # Don't create fixtures for the localhost domain
 EphemeralResponse::Configuration.white_list = 'localhost'
 
-EphemeralResponse::Configuration.expiration = 1
+EphemeralResponse::Configuration.expiration = 5
 EphemeralResponse.activate
 
 # Start an HTTP server on port 19876 using netcat
