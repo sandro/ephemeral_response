@@ -53,6 +53,13 @@ module EphemeralResponse::RackReflector
   def stop
     server.stop(false)
   end
+
+  def while_running
+    start
+    yield
+  ensure
+    stop
+  end
 end
 
 # EphemeralResponse::RackReflector.start.join
