@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Integrating with the net" do
+describe "Normal flow" do
   include FakeFS::SpecHelpers
 
   after do
