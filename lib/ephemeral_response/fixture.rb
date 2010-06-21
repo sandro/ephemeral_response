@@ -56,10 +56,6 @@ module EphemeralResponse
       end
     end
 
-    def deep_clone(object)
-      Marshal.load(Marshal.dump(object))
-    end
-
     def expired?
       (created_at + Configuration.expiration) < Time.now
     end
@@ -104,5 +100,10 @@ module EphemeralResponse
     def generate_file_name
       "#{normalized_name}_#{identifier[0..6]}.yml"
     end
+
+    def deep_clone(object)
+      Marshal.load(Marshal.dump(object))
+    end
+
   end
 end
