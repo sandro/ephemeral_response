@@ -20,3 +20,9 @@ Net::HTTP.get(uri)
 # Fixtures are still created for Google
 uri = URI.parse('http://www.google.com/')
 Net::HTTP.get(uri)
+
+puts "The following directory should only contain a fixture for google"
+puts
+listing_cmd = %(ls #{File.expand_path(EphemeralResponse::Configuration.fixture_directory)})
+puts listing_cmd
+puts %x(#{listing_cmd})
