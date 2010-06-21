@@ -18,6 +18,7 @@ module EphemeralResponse
   def self.deactivate
     Net::HTTP.class_eval do
       remove_method(:generate_uri) if method_defined?(:generate_uri)
+      remove_method(:uri) if method_defined?(:uri)
       alias_method(:connect, :connect_without_ephemeral_response) if private_method_defined?(:connect_without_ephemeral_response)
       alias_method(:request, :request_without_ephemeral_response) if method_defined?(:request_without_ephemeral_response)
     end

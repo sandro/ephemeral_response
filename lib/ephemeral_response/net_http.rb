@@ -3,7 +3,7 @@ module Net
     alias request_without_ephemeral_response request
     alias connect_without_ephemeral_response connect
 
-    attr_accessor :uri
+    attr_reader :uri
 
     def connect
     end
@@ -11,7 +11,7 @@ module Net
 
     def generate_uri(request)
       scheme = use_ssl? ? "https" : "http"
-      self.uri = URI.parse("#{scheme}://#{conn_address}:#{conn_port}#{request.path}")
+      @uri = URI.parse("#{scheme}://#{conn_address}:#{conn_port}#{request.path}")
     end
 
     def request(request, body = nil, &block)

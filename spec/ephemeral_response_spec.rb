@@ -24,9 +24,15 @@ describe EphemeralResponse do
     end
 
     it "removes #generate_uri" do
-      Net::HTTP.instance_methods.sort.should include('generate_uri')
+      Net::HTTP.instance_methods.should include('generate_uri')
       EphemeralResponse.deactivate
       Net::HTTP.instance_methods.should_not include('generate_uri')
+    end
+
+    it "removes #uri" do
+      Net::HTTP.instance_methods.should include('uri')
+      EphemeralResponse.deactivate
+      Net::HTTP.instance_methods.should_not include('uri')
     end
   end
 end
