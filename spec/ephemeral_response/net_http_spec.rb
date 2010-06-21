@@ -20,8 +20,14 @@ describe Net::HTTP do
   describe "#generate_uri" do
     context "when HTTP" do
       subject { Net::HTTP.new('example.com') }
+
       it "returns the proper http uri object" do
         subject.generate_uri(request).should == URI.parse("http://example.com/foo?q=1")
+      end
+
+      it "sets the uri instance variable" do
+        subject.generate_uri(request)
+        subject.uri.should == URI.parse("http://example.com/foo?q=1")
       end
     end
 
@@ -31,6 +37,7 @@ describe Net::HTTP do
         https.use_ssl = true
         https
       end
+
       it "returns the proper http uri object" do
         subject.generate_uri(request).should == URI.parse("https://example.com/foo?q=1")
       end
