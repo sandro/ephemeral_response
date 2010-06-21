@@ -49,15 +49,27 @@ describe EphemeralResponse::Configuration do
 
       subject.reset
 
-      subject.fixture_directory.should == subject.const_get(:DEFAULTS)[:fixture_directory]
-      subject.expiration.should == subject.const_get(:DEFAULTS)[:expiration].call
+      subject.fixture_directory.should == "spec/fixtures/ephemeral_response"
+      subject.expiration.should == 86400
       subject.white_list.should == []
+    end
+
+    it "resets white list after the default has been modified" do
+      subject.white_list << "localhost"
+      subject.reset
+      subject.white_list.should be_empty
     end
   end
 
   describe "#white_list" do
     it "defaults to an empty array" do
       subject.white_list.should == []
+    end
+
+    it "allows hosts to be pushed onto the white list" do
+      subject.white_list << 'localhost'
+      subject.white_list << 'smackaho.st'
+      subject.white_list.should == %w(localhost smackaho.st)
     end
   end
 

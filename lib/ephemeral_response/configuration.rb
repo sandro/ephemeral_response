@@ -4,14 +4,8 @@ module EphemeralResponse
 
     attr_writer :fixture_directory
 
-    DEFAULTS = {
-      :fixture_directory => "spec/fixtures/ephemeral_response",
-      :expiration => lambda { one_day },
-      :white_list => []
-    }
-
     def fixture_directory
-      @fixture_directory || DEFAULTS[:fixture_directory]
+      @fixture_directory || "spec/fixtures/ephemeral_response"
     end
 
     def expiration=(expiration)
@@ -22,17 +16,17 @@ module EphemeralResponse
     end
 
     def expiration
-      @expiration || DEFAULTS[:expiration]
+      @expiration || one_day
     end
 
     def reset
-      self.expiration = DEFAULTS[:expiration]
-      self.fixture_directory = DEFAULTS[:fixture_directory]
-      self.white_list = DEFAULTS[:white_list]
+      @expiration = nil
+      @fixture_directory = nil
+      @white_list = nil
     end
 
     def white_list
-      @white_list || DEFAULTS[:white_list]
+      @white_list ||= []
     end
 
     def white_list=(*hosts)
