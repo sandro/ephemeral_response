@@ -14,7 +14,7 @@ begin
     gem.homepage = "http://github.com/sandro/ephemeral_response"
     gem.authors = ["Sandro Turriate"]
     gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_development_dependency "yard", ">= 0"
+    gem.add_development_dependency "yard", ">= 0.5.0"
     gem.add_development_dependency "fakefs", ">= 0.2.1"
     gem.add_development_dependency "unicorn", ">= 1.0.0"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
