@@ -48,20 +48,26 @@ being stored in your repo.
 
 ### Configuration
 
-You can change the fixture directory which defaults to "spec/fixtures/ephemeral\_response"
+Change the fixture directory; defaults to "spec/fixtures/ephemeral\_response"
 
     EphemeralResponse::Configuration.fixture_directory = "test/fixtures/ephemeral_response"
 
-You can change the elapsed time for when a fixture will expire; defaults to 24 hours
+Change the elapsed time for when a fixture will expire; defaults to 24 hours
 
     EphemeralResponse::Configuration.expiration = 86400 # 24 hours in seconds
 
-You can also pass a block when setting expiration which gets instance\_eval'd
-giving you access to the awesome helper method `one_day`
+Pass a block when setting expiration to gain access to the awesome helper
+method `one_day`
 
     EphemeralResponse::Configuration.expiration = lambda do
-      one_day * 30 # 60 * 60 * 24 * 30
+      one_day * 30 # Expire in thirty days: 60 * 60 * 24 * 30
     end
+
+Add hosts to a white list to prevent responses from being saved. Helpful
+when running ephemeral response with an integration suite that makes requests to
+a local server.
+
+    EphemeralResponse::Configuration.white_list = "localhost", "smackaho.st"
 
 ## Similar Projects
 * [Net Recorder](http://github.com/chrisyoung/netrecorder)
