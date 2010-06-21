@@ -33,6 +33,7 @@ module EphemeralResponse
     end
 
     def self.respond_to(uri, request)
+      return yield if Configuration.white_list.include? uri.host
       fixture = Fixture.new(uri, request)
       unless fixtures[fixture.identifier]
         fixture.response = yield

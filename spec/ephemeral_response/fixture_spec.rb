@@ -66,6 +66,20 @@ describe EphemeralResponse::Fixture do
   end
 
   describe ".respond_to" do
+    context "host included in white list" do
+      before do
+        EphemeralResponse::Configuration.white_list = uri.host
+      end
+
+      it "returns flow back to net/http" do
+        2.times do
+          EphemeralResponse::Fixture.respond_to(fixture.uri, request) do
+            :real_net_request
+          end.should == :real_net_request
+        end
+      end
+    end
+
     context "fixture loaded" do
       it "returns the fixture response" do
         fixture.save
