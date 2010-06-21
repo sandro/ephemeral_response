@@ -8,13 +8,14 @@ EphemeralResponse::Configuration.white_list = 'localhost'
 EphemeralResponse::Configuration.expiration = 1
 EphemeralResponse.activate
 
-# Start an HTTP server on port 9876 using netcat
-IO.popen %(echo "HTTP/1.1 200 OK\n\n" | nc -l 9876)
+# Start an HTTP server on port 19876 using netcat
+process = IO.popen %(echo "HTTP/1.1 200 OK\n\n" | nc -l 19876)
+at_exit { Process.kill :KILL, process.pid }
 sleep 1
 
 # Make a request to the server started above
 # No new fixtures are created in spec/fixtures/ephemeral_response/
-uri = URI.parse('http://localhost:9876/')
+uri = URI.parse('http://localhost:19876/')
 Net::HTTP.get(uri)
 
 # Fixtures are still created for Google
