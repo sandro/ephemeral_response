@@ -61,5 +61,3 @@ module EphemeralResponse::RackReflector
     stop
   end
 end
-
-# EphemeralResponse::RackReflector.start.join
