@@ -24,7 +24,14 @@ module EphemeralResponse
     end
 
     def self.load_fixture(file_name)
-      fixture = YAML.load_file file_name
+      register YAML.load_file(file_name)
+    end
+
+    def self.find_or_initialize(uri, request, &block)
+      find(uri, request) || new(uri, request, &block)
+    end
+
+    def self.register(fixture)
       if fixture.expired?
         FileUtils.rm fixture.path
       else
@@ -33,14 +40,10 @@ module EphemeralResponse
     end
 
     def self.respond_to(uri, request)
-      return yield if Configuration.white_list.include? uri.host
-      fixture = Fixture.new(uri, request)
-      unless fixtures[fixture.identifier]
+      find_or_initialize(uri, request) do |fixture|
         fixture.response = yield
-        fixture.save
-        fixtures[fixture.identifier] = fixture
-      end
-      fixtures[fixture.identifier].response
+        fixture.register
+      end.response
     end
 
     def initialize(uri, request)
@@ -82,6 +85,13 @@ module EphemeralResponse
 
     def path
       File.join(Configuration.fixture_directory, file_name)
+    end
+
+    def register
+      unless Configuration.white_list.include? uri.host
+        save
+        self.class.register self
+      end
     end
 
     def request_yaml
