@@ -45,7 +45,7 @@ module EphemeralResponse
 
     def initialize(uri, request)
       @uri = uri.normalize
-      @request = deep_clone request
+      @request = deep_dup request
       @created_at = Time.now
       yield self if block_given?
     end
@@ -101,7 +101,7 @@ module EphemeralResponse
       "#{normalized_name}_#{identifier[0..6]}.yml"
     end
 
-    def deep_clone(object)
+    def deep_dup(object)
       Marshal.load(Marshal.dump(object))
     end
 
