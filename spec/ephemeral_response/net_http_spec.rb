@@ -76,5 +76,13 @@ describe Net::HTTP do
         subject.request(request)
       end
     end
+
+    context "connection not started" do
+      it "starts the connection" do
+        subject.should_not be_started
+        subject.request(request)
+        subject.should be_started
+      end
+    end
   end
 end

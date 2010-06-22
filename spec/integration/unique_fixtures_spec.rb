@@ -132,4 +132,22 @@ describe "Unique fixtures generated for the following requests" do
       new_response.body.should == responses['get_with_multiple_headers'].body
     end
   end
+
+  context "when the http service has not been started" do
+    def get
+      Net::HTTP::Get.new('/foo/bar/baz')
+    end
+
+    it "restores the correct fixture" do
+      clear_fixtures
+      http = Net::HTTP.new uri.host, uri.port
+
+
+      EphemeralResponse::RackReflector.while_running do
+        http.request(get)
+      end
+
+      http.request(get).body.should == EphemeralResponse::Fixture.find(http.uri, get).response.body
+    end
+  end
 end
