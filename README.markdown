@@ -3,8 +3,6 @@ Ephemeral Response
 
 _Save HTTP responses to give your tests a hint of reality._
 
-This is pretty much NetRecorder without the fakeweb dependency.
-
 ## Premise
 
 Web responses are volatile. Servers go down, API's change, responses change and
@@ -14,33 +12,45 @@ Response encourages you to run your tests against real web services while
 keeping your test suite snappy by caching the responses and reusing them until
 they expire.
 
-1. run tests
+1. run test suite
 2. all responses are saved to fixtures
-3. run tests
-4.  Return the cached response if it exists and isn't out of date.
+3. disconnect from the network
+4. run test suite
 
-    If a cached response exists but is out of date, update it with the real response
+## Example
 
-    Cache the response if it doesn't exist
+    require 'benchmark'
+    require 'ephemeral_response'
 
-## Usage
+    EphemeralResponse.activate
 
-    $ vi spec/spec_helper.rb
+    5.times do
+      puts Benchmark.realtime {Net::HTTP.get "example.com", "/"}
+    end
+
+    1.44242906570435     # First request caches the response as a fixture
+    0.000689029693603516
+    0.000646829605102539
+    0.00064396858215332
+    0.000645875930786133
+
+## With Rspec
 
     require 'ephemeral_response'
 
     Spec::Runner.configure do |config|
+
       config.before(:suite) do
         EphemeralResponse.activate
       end
+
       config.after(:suite) do
         EphemeralResponse.deactivate
       end
+
     end
 
-    $ rake spec
-
-The responses are cached in yaml files within spec/fixtures/ephemeral\_response.
+All responses are cached in yaml files within spec/fixtures/ephemeral\_response.
 
 I'd recommend git ignoring this directory to ensure your tests always hit the
 remote service at least once and to prevent credentials (like API keys) from
@@ -63,9 +73,9 @@ method `one_day`
       one_day * 30 # Expire in thirty days: 60 * 60 * 24 * 30
     end
 
-Add hosts to a white list to prevent responses from being saved. Helpful
-when running ephemeral response with an integration suite that makes requests to
-a local server.
+Always allow requests to be made to a host by adding it to the white list.
+Helpful when running ephemeral response with selenium which makes requests to
+the local server.
 
     EphemeralResponse::Configuration.white_list = "localhost", "smackaho.st"
 
