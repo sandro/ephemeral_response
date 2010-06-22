@@ -193,13 +193,52 @@ describe EphemeralResponse::Fixture do
   end
 
   describe "#identifier" do
-    let(:request) { Net::HTTP::Get.new '/' }
+    let(:request) { Net::HTTP::Get.new '/?foo=bar' }
     let(:uri) { URI.parse "http://example.com/" }
     subject { EphemeralResponse::Fixture.new uri, request }
 
-    it "hashes the full url with request yaml" do
-      hash = Digest::SHA1.hexdigest("#{uri}#{request.to_yaml}")
-      subject.identifier.should == hash
+    it "hashes the uri_identifier with request_identifier" do
+      Digest::SHA1.should_receive(:hexdigest).with("#{subject.uri_identifier}#{subject.request_identifier}")
+      subject.identifier
+    end
+  end
+
+  describe "#uri_identifier" do
+
+    it "returns an array containing the host when there is no query string" do
+      request = Net::HTTP::Get.new '/'
+      host = URI.parse("http://example.com/")
+      fixture = EphemeralResponse::Fixture.new(host, request)
+      fixture.uri_identifier.should == "http://example.com/"
+    end
+
+    it "does not incorrectly hash different hosts which sort identically" do
+      request = Net::HTTP::Get.new '/?foo=bar'
+      host1 = URI.parse("http://a.com/?f=b")
+      host2 = URI.parse("http://f.com/?b=a")
+      fixture1 = EphemeralResponse::Fixture.new(host1, request)
+      fixture2 = EphemeralResponse::Fixture.new(host2, request)
+      fixture1.uri_identifier.should_not == fixture2.uri_identifier
+    end
+
+    it "sorts the query strings" do
+      uri1 = URI.parse("http://example.com/?foo=bar&baz=qux&f")
+      uri2 = URI.parse("http://example.com/?baz=qux&foo=bar&f")
+      request1 = Net::HTTP::Get.new uri1.request_uri
+      request2 = Net::HTTP::Get.new uri2.request_uri
+      fixture1 = EphemeralResponse::Fixture.new(uri1, request1)
+      fixture2 = EphemeralResponse::Fixture.new(uri2, request2)
+      fixture1.uri_identifier.should == fixture2.uri_identifier
+    end
+
+    it "doesn't mix up the query string key pairs" do
+      uri1 = URI.parse("http://example.com/?foo=bar&baz=qux")
+      uri2 = URI.parse("http://example.com/?bar=foo&qux=baz")
+      request1 = Net::HTTP::Get.new uri1.request_uri
+      request2 = Net::HTTP::Get.new uri2.request_uri
+      fixture1 = EphemeralResponse::Fixture.new(uri1, request1)
+      fixture2 = EphemeralResponse::Fixture.new(uri2, request2)
+      fixture1.uri_identifier.should_not == fixture2.uri_identifier
     end
   end
 

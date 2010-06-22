@@ -5,6 +5,7 @@ module UniqueRequests
     simple_get
     get_with_query_string
     get_with_query_string_and_basic_auth
+    get_with_multiple_headers
     simple_post
     post_with_data
     post_with_body
@@ -21,11 +22,9 @@ module UniqueRequests
   end
 
   def set_up_responses
-    EphemeralResponse::RackReflector.start
     VARIATIONS.each do |request|
       responses[request] = send(request)
     end
-    EphemeralResponse::RackReflector.stop
   end
 
   def perform(request)
@@ -41,12 +40,19 @@ module UniqueRequests
   end
 
   def get_with_query_string
-    perform Net::HTTP::Get.new('/?foo=bar')
+    perform Net::HTTP::Get.new('/?foo=bar&baz=qux')
   end
 
   def get_with_query_string_and_basic_auth
     request = Net::HTTP::Get.new('/?foo=bar')
     request.basic_auth 'user', 'password'
+    perform request
+  end
+
+  def get_with_multiple_headers
+    request = Net::HTTP::Get.new('/')
+    request['Accept'] = "application/json, text/html"
+    request['Accept-Encoding'] = "deflate, gzip"
     perform request
   end
 
@@ -87,12 +93,43 @@ describe "Unique fixtures generated for the following requests" do
   before :all do
     EphemeralResponse.activate
     clear_fixtures
-    set_up_responses
+    EphemeralResponse::RackReflector.while_running do
+      set_up_responses
+    end
+  end
+
+  after :all do
+    EphemeralResponse::RackReflector.stop
   end
 
   UniqueRequests::VARIATIONS.each do |request|
     it "restores the correct response from the fixture" do
-      send(request).body.should == responses.fetch(request).body
+      send(request).body.should == responses[request].body
+    end
+  end
+
+  context "when querystring has different order" do
+    it "restores the correct response" do
+      new_response = perform Net::HTTP::Get.new('/?baz=qux&foo=bar')
+      new_response.body.should == responses['get_with_query_string'].body
+    end
+  end
+
+  context "when headers have different order" do
+    it "restores the correct response when the headers are exactly reversed" do
+      request = Net::HTTP::Get.new('/')
+      request['Accept'] = "text/html, application/json"
+      request['Accept-Encoding'] = "gzip, deflate"
+      new_response = perform request
+      new_response.body.should == responses['get_with_multiple_headers'].body
+    end
+
+    it "restores the correct response when some headers are reversed" do
+      request = Net::HTTP::Get.new('/')
+      request['Accept'] = "text/html, application/json"
+      request['Accept-Encoding'] = "deflate, gzip"
+      new_response = perform request
+      new_response.body.should == responses['get_with_multiple_headers'].body
     end
   end
 end

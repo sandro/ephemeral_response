@@ -54,7 +54,7 @@ module EphemeralResponse
     end
 
     def ==(other)
-      %w(request_yaml uri created_at response).all? do |attribute|
+      %w(request_identifier uri_identifier created_at response).all? do |attribute|
         send(attribute) == other.send(attribute)
       end
     end
@@ -68,7 +68,7 @@ module EphemeralResponse
     end
 
     def identifier
-      Digest::SHA1.hexdigest("#{uri}#{request_yaml}")
+      Digest::SHA1.hexdigest("#{uri_identifier}#{request_identifier}")
     end
 
     def method
@@ -94,8 +94,8 @@ module EphemeralResponse
       end
     end
 
-    def request_yaml
-      request.to_yaml
+    def request_identifier
+      request.to_yaml.split(//).sort
     end
 
     def save
@@ -105,15 +105,24 @@ module EphemeralResponse
       end
     end
 
-    protected
-
-    def generate_file_name
-      "#{normalized_name}_#{identifier[0..6]}.yml"
+    def uri_identifier
+      if uri.query
+        parts = uri.to_s.split("?", 2)
+        parts[1] = parts[1].split('&').sort
+        parts
+      else
+        uri.to_s
+      end
     end
+
+    protected
 
     def deep_dup(object)
       Marshal.load(Marshal.dump(object))
     end
 
+    def generate_file_name
+      "#{normalized_name}_#{identifier[0..6]}.yml"
+    end
   end
 end
