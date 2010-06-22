@@ -25,7 +25,7 @@ they expire.
     EphemeralResponse.activate
 
     5.times do
-      puts Benchmark.realtime {Net::HTTP.get "example.com", "/"}
+      puts Benchmark.realtime { Net::HTTP.get "example.com", "/" }
     end
 
     1.44242906570435     # First request caches the response as a fixture
