@@ -271,4 +271,25 @@ describe EphemeralResponse::Fixture do
       end
     end
   end
+
+  describe "#file_name" do
+    it "chops off the starting slash when accessing '/'" do
+      uri = URI.parse("http://example.com/")
+      fixture = EphemeralResponse::Fixture.new(uri, request)
+      fixture.file_name.should =~ /example-com_GET_[\w]{7}.yml/
+    end
+
+    it "chops off the starting slash when accessing '/index.html'" do
+      uri = URI.parse("http://example.com/index.html")
+      fixture = EphemeralResponse::Fixture.new(uri, request)
+      fixture.file_name.should =~ /example-com_GET_index-html_[\w]{7}.yml/
+    end
+
+    it "looks like on longer paths" do
+      uri = URI.parse("http://example.com/users/1/photos/1.html")
+      fixture = EphemeralResponse::Fixture.new(uri, request)
+      fixture.file_name.should =~ /example-com_GET_users-1-photos-1-html_[\w]{7}.yml/
+    end
+
+  end
 end
