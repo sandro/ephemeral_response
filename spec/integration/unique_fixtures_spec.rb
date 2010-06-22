@@ -36,7 +36,7 @@ module UniqueRequests
   end
 
   def simple_get
-    perform Net::HTTP::Get.new('/')
+    perform Net::HTTP::Get.new('/foo')
   end
 
   def get_with_query_string
