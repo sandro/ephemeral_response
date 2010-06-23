@@ -60,7 +60,7 @@ module EphemeralResponse
     end
 
     def expired?
-      (created_at + Configuration.expiration) < Time.now
+      !Configuration.skip_expiration && (created_at + Configuration.expiration) < Time.now
     end
 
     def file_name

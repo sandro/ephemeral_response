@@ -291,5 +291,38 @@ describe EphemeralResponse::Fixture do
       fixture.file_name.should =~ /example.com_GET_users-1-photos-1.html_[\w]{7}.yml/
     end
 
+    describe "#expired?" do
+      before do
+        fixture
+      end
+
+      context "when expiration isn't skipped" do
+        context "when the expiration time has elapsed" do
+          it "returns true" do
+            Time.travel("2030-01-01") do
+              fixture.should be_expired
+            end
+          end
+        end
+
+        context "when the expiration time has not elapsed" do
+          it "returns false" do
+            fixture.should_not be_expired
+          end
+        end
+      end
+
+      context "when expiration is skipped" do
+        it "returns false" do
+          fixture
+          EphemeralResponse::Configuration.skip_expiration = true
+          Time.travel("2030-01-01") do
+            fixture.should_not be_expired
+          end
+          EphemeralResponse::Configuration.skip_expiration = false
+        end
+      end
+    end
+
   end
 end
