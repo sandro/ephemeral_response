@@ -76,7 +76,7 @@ module EphemeralResponse
     end
 
     def normalized_name
-      [uri.host, method, fs_path].compact.join("_").gsub(/[\/.]/, '-')
+      [uri.host, method, fs_path].compact.join("_").gsub(/[\/]/, '-')
     end
 
     def fs_path
