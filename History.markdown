@@ -1,6 +1,13 @@
 History
 =======
 
+0.2.1 / master
+--------------
+
+#### Enhancements
+
+* Periods no longer replaced with slashes in fixture names.
+
 0.2.0 / 2010-06-23
 --------------
 
