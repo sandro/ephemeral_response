@@ -35,4 +35,10 @@ describe EphemeralResponse do
       Net::HTTP.instance_methods.should_not include('uri')
     end
   end
+
+  describe ".fixtures" do
+    it "returns the registered fixtures" do
+      EphemeralResponse.fixtures.should == EphemeralResponse::Fixture.fixtures
+    end
+  end
 end

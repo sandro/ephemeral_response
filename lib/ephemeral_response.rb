@@ -23,4 +23,8 @@ module EphemeralResponse
       alias_method(:request, :request_without_ephemeral_response) if method_defined?(:request_without_ephemeral_response)
     end
   end
+
+  def self.fixtures
+    Fixture.fixtures
+  end
 end
