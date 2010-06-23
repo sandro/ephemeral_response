@@ -84,4 +84,16 @@ describe EphemeralResponse::Configuration do
       subject.white_list.should == ['localhost', 'smackaho.st']
     end
   end
+
+  describe "#skip_expiration" do
+    it "sets skip_expiration to true" do
+      subject.skip_expiration = true
+      subject.skip_expiration.should == true
+    end
+
+    it "sets skip_expiration to false" do
+      subject.skip_expiration = false
+      subject.skip_expiration.should == false
+    end
+  end
 end

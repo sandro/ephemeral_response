@@ -2,6 +2,7 @@ module EphemeralResponse
   module Configuration
     extend self
 
+    attr_accessor :skip_expiration
     attr_writer :fixture_directory
 
     def fixture_directory
