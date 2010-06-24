@@ -83,6 +83,15 @@ Never let fixtures expire by setting skip\_expiration to true.
 
     EphemeralResponse::Configuration.skip_expiration = true
 
+All together now!
+
+    EphemeralResponse.configure do |config|
+      config.fixture_directory = "test/fixtures/ephemeral_response"
+      config.expiration = lambda { one_day * 30 }
+      config.white_list = 'localhost'
+      config.skip_expiration = true
+    end
+
 ## Similar Projects
 * [Net Recorder](http://github.com/chrisyoung/netrecorder)
 * [Stalefish](http://github.com/jsmestad/stale_fish)
