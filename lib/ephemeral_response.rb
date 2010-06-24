@@ -27,4 +27,9 @@ module EphemeralResponse
   def self.fixtures
     Fixture.fixtures
   end
+
+  def self.configure
+    yield Configuration if block_given?
+    Configuration
+  end
 end
