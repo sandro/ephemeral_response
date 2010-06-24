@@ -2,8 +2,7 @@ module EphemeralResponse
   module Configuration
     extend self
 
-    attr_accessor :skip_expiration
-    attr_writer :fixture_directory
+    attr_writer :fixture_directory, :skip_expiration
 
     def fixture_directory
       @fixture_directory || "spec/fixtures/ephemeral_response"
@@ -24,6 +23,11 @@ module EphemeralResponse
       @expiration = nil
       @fixture_directory = nil
       @white_list = nil
+      @skip_expiration = nil
+    end
+
+    def skip_expiration
+      @skip_expiration || false
     end
 
     def white_list

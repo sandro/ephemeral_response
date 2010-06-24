@@ -39,19 +39,39 @@ describe EphemeralResponse::Configuration do
   end
 
   describe "#reset" do
-    it "resets expiration, fixture directory, expiration, and white list to the defaults" do
-      subject.fixture_directory = "test/fixtures/ephemeral_response"
+    it "resets expiration" do
       subject.expiration = 1
-      subject.white_list = 'localhost'
-      subject.fixture_directory.should == "test/fixtures/ephemeral_response"
       subject.expiration.should == 1
-      subject.white_list.should == ['localhost']
+      subject.reset
 
+      subject.expiration.should == 86400
+    end
+
+    it "resets fixture_directory" do
+      subject.fixture_directory = "test/fixtures/ephemeral_response"
+      subject.fixture_directory.should == "test/fixtures/ephemeral_response"
       subject.reset
 
       subject.fixture_directory.should == "spec/fixtures/ephemeral_response"
-      subject.expiration.should == 86400
+    end
+
+    it "resets white_list" do
+      subject.white_list = 'localhost'
+      subject.white_list.should == ['localhost']
+      subject.reset
+
       subject.white_list.should == []
+    end
+
+    it "resets skip_expiration" do
+      subject.skip_expiration = true
+      subject.skip_expiration.should == true
+      subject.reset
+
+      subject.skip_expiration.should == false
+    end
+
+    it "resets expiration, fixture directory, expiration, and white list to the defaults" do
     end
 
     it "resets white list after the default has been modified" do

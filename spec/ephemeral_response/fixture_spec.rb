@@ -319,7 +319,6 @@ describe EphemeralResponse::Fixture do
           Time.travel("2030-01-01") do
             fixture.should_not be_expired
           end
-          EphemeralResponse::Configuration.skip_expiration = false
         end
       end
     end
