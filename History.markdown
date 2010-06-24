@@ -7,6 +7,7 @@ History
 #### Enhancements
 
 * Periods no longer replaced with slashes in fixture names.
+* Added skip_expiration option allowing fixtures to never expire.
 
 0.2.0 / 2010-06-23
 --------------
