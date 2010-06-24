@@ -79,6 +79,10 @@ the local server.
 
     EphemeralResponse::Configuration.white_list = "localhost", "smackaho.st"
 
+Never let fixtures expire by setting skip\_expiration to true.
+
+    EphemeralResponse::Configuration.skip_expiration = true
+
 ## Similar Projects
 * [Net Recorder](http://github.com/chrisyoung/netrecorder)
 * [Stalefish](http://github.com/jsmestad/stale_fish)
@@ -96,4 +100,4 @@ the local server.
 
 ## Copyright
 
-Copyright (c) 2010 Sandro Turriate. See MIT_LICENSE for details.
+Copyright (c) 2010 Sandro Turriate. See MIT\_LICENSE for details.
