@@ -56,15 +56,15 @@ I'd recommend git ignoring this directory to ensure your tests always hit the
 remote service at least once and to prevent credentials (like API keys) from
 being stored in your repo.
 
-### Customize how requests get matched by the cache
+## Customize how requests get matched by the cache
 
-For any given host a block of code can be run to determine the cache key for
+For any given host a block can be run to determine the cache key for
 the request.  The request object is yielded to the block and can be used to
 create the unique key for that request. An example may help clear this up.
 
     EphemeralResponse.configure do |config|
       config.register('example.com') do |request|
-        "#{request.method}{request.path}"
+        "#{request.method}#{request.path}"
       end
     end
 
@@ -84,7 +84,7 @@ create the unique key for that request. An example may help clear this up.
 
 Take a look in `examples/custom_cache_key.rb` to see this in action.
 
-### Configuration
+## Configuration
 
 Change the fixture directory; defaults to "spec/fixtures/ephemeral\_response"
 
@@ -101,7 +101,7 @@ method `one_day`
       one_day * 30 # Expire in thirty days: 60 * 60 * 24 * 30
     end
 
-#### Selenium
+### Selenium Tip
 
 Always allow requests to be made to a host by adding it to the white list.
 Helpful when running ephemeral response with selenium which makes requests to
