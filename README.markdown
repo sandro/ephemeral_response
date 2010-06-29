@@ -73,11 +73,13 @@ method `one_day`
       one_day * 30 # Expire in thirty days: 60 * 60 * 24 * 30
     end
 
+#### Selenium
+
 Always allow requests to be made to a host by adding it to the white list.
 Helpful when running ephemeral response with selenium which makes requests to
 the local server.
 
-    EphemeralResponse::Configuration.white_list = "localhost", "smackaho.st"
+    EphemeralResponse::Configuration.white_list = "localhost", "127.0.0.1"
 
 Never let fixtures expire by setting skip\_expiration to true.
 
