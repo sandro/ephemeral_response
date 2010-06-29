@@ -7,7 +7,7 @@ require 'ephemeral_response/configuration'
 require 'ephemeral_response/fixture'
 
 module EphemeralResponse
-  VERSION = "0.2.1".freeze
+  VERSION = "0.3.0".freeze
 
   def self.activate
     deactivate
