@@ -6,7 +6,7 @@ _Save HTTP responses to give your tests a hint of reality._
 ## Premise
 
 Web responses are volatile. Servers go down, API's change, responses change and
-everytime something changes, your tests should fail. Mocking out web responses
+every time something changes, your tests should fail. Mocking out web responses
 may speed up your test suite but the tests essentially become lies. Ephemeral
 Response encourages you to run your tests against real web services while
 keeping your test suite snappy by caching the responses and reusing them until
@@ -58,9 +58,18 @@ being stored in your repo.
 
 ## Customize how requests get matched by the cache
 
-For any given host a block can be run to determine the cache key for
-the request.  The request object is yielded to the block and can be used to
-create the unique key for that request. An example may help clear this up.
+Every request gets a unique key that gets added to the cache. Additional
+requests attempt to generate this same key so that their responses can be
+fetched from the cache.
+
+The default key is a combination of the URI, request method, and request body.
+Occasionally, these properties contain variations which cannot be consistently
+reproduced. Time is a good example. If your query string or post data
+references the current time then every request will generate a different key
+therefore no fixtures will be loaded. You can overcome this issue by
+registering a custom key generation block per host.
+
+An example may help clear this up.
 
     EphemeralResponse.configure do |config|
       config.register('example.com') do |request|
@@ -68,14 +77,14 @@ create the unique key for that request. An example may help clear this up.
       end
     end
 
-    # This will be cached
+    # This will get cached
     Net::HTTP.start('example.com') do |http|
       get = Net::HTTP::Get.new('/')
       get['Date'] = Time.now.to_s
       http.request(get)
     end
 
-    # This will read from the cache even though the date is different
+    # This is read from the cache even though the date is different
     Net::HTTP.start('example.com') do |http|
       get = Net::HTTP::Get.new('/')
       get['Date'] = "Wed Dec 31 19:00:00 -0500 1969"
