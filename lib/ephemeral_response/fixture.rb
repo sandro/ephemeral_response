@@ -53,12 +53,6 @@ module EphemeralResponse
       yield self if block_given?
     end
 
-    def ==(other)
-      %w(request_identifier uri_identifier created_at response).all? do |attribute|
-        send(attribute) == other.send(attribute)
-      end
-    end
-
     def expired?
       !Configuration.skip_expiration && (created_at + Configuration.expiration) < Time.now
     end
