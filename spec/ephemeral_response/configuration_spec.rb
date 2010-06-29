@@ -71,9 +71,6 @@ describe EphemeralResponse::Configuration do
       subject.skip_expiration.should == false
     end
 
-    it "resets expiration, fixture directory, expiration, and white list to the defaults" do
-    end
-
     it "resets white list after the default has been modified" do
       subject.white_list << "localhost"
       subject.reset
