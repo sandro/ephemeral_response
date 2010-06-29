@@ -19,11 +19,20 @@ module EphemeralResponse
       @expiration || one_day
     end
 
+    def host_registry
+      @host_registry ||= Hash.new(lambda {})
+    end
+
+    def register(host, &block)
+      host_registry[host] = block
+    end
+
     def reset
       @expiration = nil
       @fixture_directory = nil
       @white_list = nil
       @skip_expiration = nil
+      @host_registry = nil
     end
 
     def skip_expiration

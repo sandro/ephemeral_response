@@ -62,7 +62,7 @@ module EphemeralResponse
     end
 
     def identifier
-      Digest::SHA1.hexdigest("#{uri_identifier}#{request_identifier}")
+      Digest::SHA1.hexdigest(registered_identifier || default_identifier)
     end
 
     def method
@@ -88,10 +88,6 @@ module EphemeralResponse
       end
     end
 
-    def request_identifier
-      request.to_yaml.split(//).sort
-    end
-
     def save
       FileUtils.mkdir_p Configuration.fixture_directory
       File.open(path, 'w') do |f|
@@ -115,8 +111,16 @@ module EphemeralResponse
       Marshal.load(Marshal.dump(object))
     end
 
+    def default_identifier
+      "#{uri_identifier}#{request.method}#{request.body}"
+    end
+
     def generate_file_name
       "#{normalized_name}_#{identifier[0..6]}.yml"
+    end
+
+    def registered_identifier
+      identity = Configuration.host_registry[uri.host].call(request) and identity.to_s
     end
   end
 end

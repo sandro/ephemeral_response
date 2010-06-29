@@ -197,10 +197,26 @@ describe EphemeralResponse::Fixture do
     let(:uri) { URI.parse "http://example.com/" }
     subject { EphemeralResponse::Fixture.new uri, request }
 
-    it "hashes the uri_identifier with request_identifier" do
-      Digest::SHA1.should_receive(:hexdigest).with("#{subject.uri_identifier}#{subject.request_identifier}")
-      subject.identifier
+    context "without a registration for the host" do
+      it "hashes the uri_identifier with method and the post body" do
+        Digest::SHA1.should_receive(:hexdigest).with("#{subject.uri_identifier}#{request.method}#{request.body}")
+        subject.identifier
+      end
     end
+
+    context "with a registration for the host" do
+
+      it "returns the hash of the block's return value as a string" do
+        EphemeralResponse.configure {|c| c.register('example.com') {|request| :identifier } }
+        subject.identifier.should == Digest::SHA1.hexdigest(:identifier.to_s)
+      end
+
+      it "returns the hash of the default identifier when the block returns nil" do
+        EphemeralResponse.configure {|c| c.register('example.com') {|request|  } }
+        subject.identifier.should == Digest::SHA1.hexdigest(subject.send(:default_identifier))
+      end
+    end
+
   end
 
   describe "#uri_identifier" do
@@ -322,6 +338,5 @@ describe EphemeralResponse::Fixture do
         end
       end
     end
-
   end
 end

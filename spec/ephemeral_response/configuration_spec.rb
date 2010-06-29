@@ -76,6 +76,12 @@ describe EphemeralResponse::Configuration do
       subject.reset
       subject.white_list.should be_empty
     end
+
+    it "resets the host_registry" do
+      subject.register('example.com') {}
+      subject.reset
+      subject.host_registry.should be_empty
+    end
   end
 
   describe "#white_list" do
@@ -111,6 +117,14 @@ describe EphemeralResponse::Configuration do
     it "sets skip_expiration to false" do
       subject.skip_expiration = false
       subject.skip_expiration.should == false
+    end
+  end
+
+  describe "#register" do
+    it "registers the block for the host" do
+      block = Proc.new {}
+      subject.register('example.com', &block)
+      subject.host_registry['example.com'].should == block
     end
   end
 end
