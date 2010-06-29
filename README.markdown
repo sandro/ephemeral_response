@@ -56,6 +56,34 @@ I'd recommend git ignoring this directory to ensure your tests always hit the
 remote service at least once and to prevent credentials (like API keys) from
 being stored in your repo.
 
+### Customize how requests get matched by the cache
+
+For any given host a block of code can be run to determine the cache key for
+the request.  The request object is yielded to the block and can be used to
+create the unique key for that request. An example may help clear this up.
+
+    EphemeralResponse.configure do |config|
+      config.register('example.com') do |request|
+        "#{request.method}{request.path}"
+      end
+    end
+
+    # This will be cached
+    Net::HTTP.start('example.com') do |http|
+      get = Net::HTTP::Get.new('/')
+      get['Date'] = Time.now.to_s
+      http.request(get)
+    end
+
+    # This will read from the cache even though the date is different
+    Net::HTTP.start('example.com') do |http|
+      get = Net::HTTP::Get.new('/')
+      get['Date'] = "Wed Dec 31 19:00:00 -0500 1969"
+      http.request(get)
+    end
+
+Take a look in `examples/custom_cache_key.rb` to see this in action.
+
 ### Configuration
 
 Change the fixture directory; defaults to "spec/fixtures/ephemeral\_response"
