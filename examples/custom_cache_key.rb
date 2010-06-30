@@ -3,14 +3,14 @@ require 'rubygems'
 require 'lib/ephemeral_response'
 require 'benchmark'
 
-EphemeralResponse::Configuration.expiration = 15
-EphemeralResponse.activate
-
 EphemeralResponse.configure do |config|
+  config.expiration = 1
   config.register('example.com') do |request|
     "#{request.uri.host}#{request.method}#{request.path}"
   end
 end
+
+EphemeralResponse.activate
 
 def benchmark_request(number=1)
   uri = URI.parse('http://example.com/')
