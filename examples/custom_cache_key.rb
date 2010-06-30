@@ -8,7 +8,7 @@ EphemeralResponse.activate
 
 EphemeralResponse.configure do |config|
   config.register('example.com') do |request|
-    "#{request.method}#{request.path}"
+    "#{request.uri.host}#{request.method}#{request.path}"
   end
 end
 
