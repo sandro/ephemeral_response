@@ -1,9 +1,11 @@
 require 'net/http'
 require 'fileutils'
 require 'time'
+require 'delegate'
 require 'digest/sha1'
 require 'yaml'
 require 'ephemeral_response/configuration'
+require 'ephemeral_response/request'
 require 'ephemeral_response/fixture'
 
 module EphemeralResponse

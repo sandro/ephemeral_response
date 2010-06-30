@@ -120,7 +120,7 @@ module EphemeralResponse
     end
 
     def registered_identifier
-      identity = Configuration.host_registry[uri.host].call(request) and identity.to_s
+      identity = Configuration.host_registry[uri.host].call(Request.new(uri, request)) and identity.to_s
     end
   end
 end

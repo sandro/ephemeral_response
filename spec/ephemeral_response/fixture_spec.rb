@@ -206,6 +206,11 @@ describe EphemeralResponse::Fixture do
 
     context "with a registration for the host" do
 
+      it "returns a request object with the uri" do
+        EphemeralResponse.configure {|c| c.register('example.com') {|request| request.uri } }
+        subject.identifier.should == Digest::SHA1.hexdigest(uri.to_s)
+      end
+
       it "returns the hash of the block's return value as a string" do
         EphemeralResponse.configure {|c| c.register('example.com') {|request| :identifier } }
         subject.identifier.should == Digest::SHA1.hexdigest(:identifier.to_s)
