@@ -1,6 +1,13 @@
 History
 =======
 
+0.3.1 / 2010-06-29
+--------------
+
+#### Enhancements
+
+* Allow custom matchers by host (leshill)
+
 0.2.1 / 2010-06-24
 --------------
 
