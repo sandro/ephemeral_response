@@ -9,12 +9,12 @@ module Net
     end
     private :connect
 
-    def do_start_without_ephemeral_response
+    def do_start_with_ephemeral_response
       D "EphemeralResponse: establishing connection to #{uri}"
       connect_without_ephemeral_response
       @started = true
     end
-    private :do_start_without_ephemeral_response
+    private :do_start_with_ephemeral_response
 
     def generate_uri(request)
       scheme = use_ssl? ? "https" : "http"
@@ -24,7 +24,7 @@ module Net
     def request(request, body = nil, &block)
       generate_uri(request)
       EphemeralResponse::Fixture.respond_to(uri, request) do
-        do_start_without_ephemeral_response
+        do_start_with_ephemeral_response
         request_without_ephemeral_response(request, body, &block)
       end
     end
