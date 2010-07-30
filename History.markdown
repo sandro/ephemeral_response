@@ -1,6 +1,15 @@
 History
 =======
 
+0.3.2 / 2010-07-30
+------------------
+
+#### Bug Fix
+
+* Net::HTTP.request now yields the response when a fixture exists
+* Net::HTTPResponse#read\_body works when a fixture exists
+* OpenURI compatibility (it depends on #read_body)
+
 0.3.1 / 2010-06-29
 --------------
 
