@@ -24,6 +24,10 @@ module EphemeralResponse
       alias_method(:connect, :connect_without_ephemeral_response) if private_method_defined?(:connect_without_ephemeral_response)
       alias_method(:request, :request_without_ephemeral_response) if method_defined?(:request_without_ephemeral_response)
     end
+    Net::HTTPResponse.class_eval do
+      alias_method(:procdest, :procdest_without_ephemeral_response) if private_method_defined?(:procdest_without_ephemeral_response)
+      alias_method(:read_body, :read_body_without_ephemeral_response) if method_defined?(:read_body_without_ephemeral_response)
+    end
   end
 
   def self.fixtures

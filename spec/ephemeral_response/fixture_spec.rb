@@ -6,7 +6,11 @@ describe EphemeralResponse::Fixture do
   let(:fixture_directory) { File.expand_path EphemeralResponse::Configuration.fixture_directory }
   let(:request) { Net::HTTP::Get.new '/' }
   let(:uri) { URI.parse("http://example.com/") }
-  let(:fixture) { EphemeralResponse::Fixture.new(uri, request) { |f| f.response = "hello world"} }
+  let(:fixture) do
+    EphemeralResponse::Fixture.new(uri, request) do |f|
+      f.response = OpenStruct.new(:body => "hello world")
+    end
+  end
 
   describe ".load_all" do
     it "returns the empty fixtures hash when the fixture directory doesn't exist" do
@@ -115,7 +119,9 @@ describe EphemeralResponse::Fixture do
 
       it "returns flow back to net/http" do
         2.times do
-          EphemeralResponse::Fixture.respond_to(fixture.uri, request) {}
+          EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+            stub(:body => "")
+          end
           EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
         end
       end
@@ -129,7 +135,9 @@ describe EphemeralResponse::Fixture do
         end
 
         it "returns flow to net/http when host is not normalized" do
-          EphemeralResponse::Fixture.respond_to(uri, request) {}
+          EphemeralResponse::Fixture.respond_to(uri, request, nil) do
+            stub(:body => "")
+          end
           EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
         end
       end
@@ -139,22 +147,38 @@ describe EphemeralResponse::Fixture do
     context "fixture loaded" do
       it "returns the fixture response" do
         fixture.register
-        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request)
-        response.should == "hello world"
+        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil)
+        response.body.should == "hello world"
+      end
+
+      it "yields the response body to the request block" do
+        fixture.register
+        reverse_body = nil
+        request_block = lambda {|response| reverse_body = response.body.reverse}
+        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, request_block)
+        reverse_body.should == response.body.reverse
       end
     end
 
     context "fixture not loaded" do
       it "sets the response to the block" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request) do
-          "new response"
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+          stub(:body => "new response")
         end
-        EphemeralResponse::Fixture.fixtures[fixture.identifier].response.should == "new response"
+        EphemeralResponse::Fixture.fixtures[fixture.identifier].response.body.should == "new response"
+      end
+
+      it "sets @body to the body string" do
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+          stub(:body => :hello_world)
+        end
+        response = EphemeralResponse::Fixture.fixtures[fixture.identifier].response
+        response.instance_variable_get(:@body).should == "hello_world"
       end
 
       it "saves the fixture" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request) do
-          "new response"
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+          stub(:body => "new response")
         end
         File.exists?(fixture.path).should be_true
       end
@@ -290,6 +314,19 @@ describe EphemeralResponse::Fixture do
         fixture.register
         EphemeralResponse::Fixture.fixtures.should_not have_key(fixture.identifier)
       end
+    end
+  end
+
+  describe "#new?" do
+    it "is new when the fixture hasn't been registered" do
+      fixture = EphemeralResponse::Fixture.new uri, request
+      fixture.should be_new
+    end
+
+    it "isn't new when the fixture has been registered" do
+      fixture = EphemeralResponse::Fixture.new uri, request
+      EphemeralResponse::Fixture.register(fixture)
+      fixture.should_not be_new
     end
   end
 

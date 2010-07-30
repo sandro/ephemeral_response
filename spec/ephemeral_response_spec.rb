@@ -11,6 +11,7 @@ describe EphemeralResponse do
   describe ".deactivate" do
     before do
       Net::HTTP.stub(:alias_method)
+      Net::HTTPResponse.stub(:alias_method)
     end
 
     it "restores the original connection method" do
@@ -20,6 +21,16 @@ describe EphemeralResponse do
 
     it "restores the original request method" do
       Net::HTTP.should_receive(:alias_method).with(:request, :request_without_ephemeral_response)
+      EphemeralResponse.deactivate
+    end
+
+    it "restores #procdest" do
+      Net::HTTPResponse.should_receive(:alias_method).with(:procdest, :procdest_without_ephemeral_response)
+      EphemeralResponse.deactivate
+    end
+
+    it "restores #read_body" do
+      Net::HTTPResponse.should_receive(:alias_method).with(:read_body, :read_body_without_ephemeral_response)
       EphemeralResponse.deactivate
     end
 

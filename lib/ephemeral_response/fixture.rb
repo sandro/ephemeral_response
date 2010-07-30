@@ -39,11 +39,16 @@ module EphemeralResponse
       end
     end
 
-    def self.respond_to(uri, request)
-      find_or_initialize(uri, request) do |fixture|
+    def self.respond_to(uri, request, request_block)
+      fixture = find_or_initialize(uri, request)
+      if fixture.new?
         fixture.response = yield
+        fixture.response.instance_variable_set(:@body, fixture.response.body.to_s)
         fixture.register
-      end.response
+      elsif request_block
+        request_block.call fixture.response
+      end
+      fixture.response
     end
 
     def initialize(uri, request)
@@ -67,6 +72,10 @@ module EphemeralResponse
 
     def method
       request.method
+    end
+
+    def new?
+      !self.class.fixtures.has_key?(identifier)
     end
 
     def normalized_name

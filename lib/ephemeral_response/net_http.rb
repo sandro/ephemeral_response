@@ -23,9 +23,47 @@ module Net
 
     def request(request, body = nil, &block)
       generate_uri(request)
-      EphemeralResponse::Fixture.respond_to(uri, request) do
+      EphemeralResponse::Fixture.respond_to(uri, request, block) do
         do_start_with_ephemeral_response
         request_without_ephemeral_response(request, body, &block)
+      end
+    end
+  end
+
+  module PersistentReadAdapter
+    def _buffer
+      @_buffer ||= ""
+    end
+
+    def <<(str)
+      _buffer << str
+      super
+    end
+
+    def to_yaml(opts = {})
+      _buffer.to_yaml opts
+    end
+
+    def to_s
+      _buffer
+    end
+  end
+
+  class HTTPResponse
+    alias procdest_without_ephemeral_response procdest
+    alias read_body_without_ephemeral_response read_body
+
+    def procdest(dest, block)
+      to = procdest_without_ephemeral_response(dest, block)
+      to.extend PersistentReadAdapter
+    end
+
+    def read_body(dest = nil, &block)
+      if @read
+        yield @body if block_given?
+        @body
+      else
+        read_body_without_ephemeral_response(dest, &block)
       end
     end
   end

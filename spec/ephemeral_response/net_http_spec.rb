@@ -4,7 +4,7 @@ describe Net::HTTP do
   subject { Net::HTTP.new('example.com') }
   let(:request) { Net::HTTP::Get.new("/foo?q=1") }
   let(:uri) { URI.parse("http://example.com/foo?q=1") }
-  let(:response) { "Hello" }
+  let(:response) { OpenStruct.new(:body => "Hello") }
 
   before do
     subject.stub(:connect_without_ephemeral_response)
@@ -63,7 +63,14 @@ describe Net::HTTP do
 
     context "fixture exists" do
       before do
-        EphemeralResponse::Fixture.stub(:respond_to => response)
+        fixture = EphemeralResponse::Fixture.new(uri, request) do |f|
+          f.response = response
+        end
+        fixture.register
+      end
+
+      after do
+        clear_fixtures
       end
 
       it "does not connect" do
@@ -74,6 +81,12 @@ describe Net::HTTP do
       it "does not call #request_without_ephemeral_response" do
         subject.should_not_receive(:request_without_ephemeral_response).with(request, nil).and_return(response)
         subject.request(request)
+      end
+
+      it "yields the response to the block" do
+        subject.request(request) do |response|
+          response.should == response
+        end
       end
     end
 
