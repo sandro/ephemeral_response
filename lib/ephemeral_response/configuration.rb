@@ -20,7 +20,7 @@ module EphemeralResponse
     end
 
     def host_registry
-      @host_registry ||= Hash.new(lambda {})
+      @host_registry ||= Hash.new(proc {})
     end
 
     def register(host, &block)

@@ -26,13 +26,13 @@ describe EphemeralResponse::Configuration do
 
     context "setting a block" do
       it "returns the value of the block" do
-        subject.expiration = lambda { one_day * 7 }
+        subject.expiration = proc { one_day * 7 }
         subject.expiration.should == 604800
       end
 
       it "raises an error when the return value of the block is not a FixNum" do
         expect do
-          subject.expiration = lambda { "1 day" }
+          subject.expiration = proc { "1 day" }
         end.to raise_exception(TypeError, "expiration must be expressed in seconds")
       end
     end

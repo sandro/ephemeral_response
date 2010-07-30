@@ -4,7 +4,8 @@ require 'ephemeral_response'
 require 'fakefs/safe'
 require 'fakefs/spec_helpers'
 require 'spec/autorun'
-Dir.glob("spec/support/*.rb") {|f| require f}
+
+Dir.glob("spec/support/*.rb") {|f| require File.expand_path(f, '.')}
 
 Spec::Runner.configure do |config|
   config.include ClearFixtures
