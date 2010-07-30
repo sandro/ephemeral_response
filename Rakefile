@@ -13,6 +13,7 @@ begin
     gem.email = "sandro.turriate@gmail.com"
     gem.homepage = "http://github.com/sandro/ephemeral_response"
     gem.authors = ["Sandro Turriate", "Les Hill"]
+    gem.add_development_dependency "jeweler", ">= 1.4.0"
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "yard", ">= 0.5.0"
     gem.add_development_dependency "fakefs", ">= 0.2.1"
