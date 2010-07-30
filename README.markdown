@@ -110,6 +110,10 @@ method `one_day`
       one_day * 30 # Expire in thirty days: 60 * 60 * 24 * 30
     end
 
+Never let fixtures expire by setting skip\_expiration to true.
+
+    EphemeralResponse::Configuration.skip_expiration = true
+
 ### Selenium Tip
 
 Always allow requests to be made to a host by adding it to the white list.
@@ -118,17 +122,13 @@ the local server.
 
     EphemeralResponse::Configuration.white_list = "localhost", "127.0.0.1"
 
-Never let fixtures expire by setting skip\_expiration to true.
-
-    EphemeralResponse::Configuration.skip_expiration = true
-
-All together now!
+### All together now!
 
     EphemeralResponse.configure do |config|
       config.fixture_directory = "test/fixtures/ephemeral_response"
       config.expiration = lambda { one_day * 30 }
-      config.white_list = 'localhost'
       config.skip_expiration = true
+      config.white_list = 'localhost'
     end
 
 ## Similar Projects
