@@ -9,7 +9,7 @@ require 'ephemeral_response/request'
 require 'ephemeral_response/fixture'
 
 module EphemeralResponse
-  VERSION = "0.3.1".freeze
+  VERSION = "0.3.2".freeze
 
   def self.activate
     deactivate
