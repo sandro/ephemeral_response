@@ -1,7 +1,7 @@
 module EphemeralResponse
   class Fixture
     attr_accessor :response
-    attr_reader :request, :uri, :created_at
+    attr_reader :request, :uri, :created_at, :body
 
     def self.fixtures
       @fixtures ||= {}
@@ -11,8 +11,8 @@ module EphemeralResponse
       @fixtures = {}
     end
 
-    def self.find(uri, request)
-      fixtures[Fixture.new(uri, request).identifier]
+    def self.find(uri, request, body = nil)
+      fixtures[Fixture.new(uri, request, body).identifier]
     end
 
     def self.load_all
@@ -27,8 +27,8 @@ module EphemeralResponse
       register YAML.load_file(file_name)
     end
 
-    def self.find_or_initialize(uri, request, &block)
-      find(uri, request) || new(uri, request, &block)
+    def self.find_or_initialize(uri, request, body = nil, &block)
+      find(uri, request, body) || new(uri, request, body, &block)
     end
 
     def self.register(fixture)
@@ -39,8 +39,8 @@ module EphemeralResponse
       end
     end
 
-    def self.respond_to(uri, request, request_block)
-      fixture = find_or_initialize(uri, request)
+    def self.respond_to(uri, request, body, request_block)
+      fixture = find_or_initialize(uri, request, body)
       if fixture.new?
         fixture.response = yield
         fixture.response.instance_variable_set(:@body, fixture.response.body.to_s)
@@ -51,10 +51,11 @@ module EphemeralResponse
       fixture.response
     end
 
-    def initialize(uri, request)
+    def initialize(uri, request, body = nil)
       @uri = uri.normalize
       @request = deep_dup request
       @created_at = Time.now
+      @body = body
       yield self if block_given?
     end
 
@@ -121,7 +122,7 @@ module EphemeralResponse
     end
 
     def default_identifier
-      "#{uri_identifier}#{request.method}#{request.body}"
+      "#{uri_identifier}#{request.method}#{request.body}#{body}"
     end
 
     def generate_file_name

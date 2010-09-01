@@ -48,7 +48,7 @@ describe "Read Body Compatibility" do
       post = Net::HTTP::Post.new('/')
       real_response = nil
       http.post('/', 'foo=bar') {|s| real_response = s}
-      fixture = EphemeralResponse::Fixture.find(uri, post)
+      fixture = EphemeralResponse::Fixture.find(uri, post, "foo=bar")
       File.exists?(fixture.path).should be_true
       fixture_response = send_request(post, 'foo=bar').body
       real_response.should == fixture_response

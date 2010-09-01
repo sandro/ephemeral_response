@@ -6,8 +6,21 @@ describe EphemeralResponse::Fixture do
   let(:fixture_directory) { File.expand_path EphemeralResponse::Configuration.fixture_directory }
   let(:request) { Net::HTTP::Get.new '/' }
   let(:uri) { URI.parse("http://example.com/") }
+  let(:body) { <<-XML }
+    <?xml version="1.0" encoding="utf-8" ?>
+    <env:Envelope
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+      <env:Header>
+      </env:Header>
+      <env:Body>
+        <getClientAccounts xmlns="https://adwords.google.com/api/adwords/v13"></getClientAccounts>
+      </env:Body>
+    </env:Envelope>
+    XML
   let(:fixture) do
-    EphemeralResponse::Fixture.new(uri, request) do |f|
+    EphemeralResponse::Fixture.new(uri, request, body) do |f|
       f.response = OpenStruct.new(:body => "hello world")
     end
   end
@@ -78,7 +91,7 @@ describe EphemeralResponse::Fixture do
     context "when fixture registered" do
       it "returns the fixture" do
         fixture.register
-        EphemeralResponse::Fixture.find(uri, request).should == fixture
+        EphemeralResponse::Fixture.find(uri, request, body).should == fixture
       end
     end
 
@@ -93,7 +106,7 @@ describe EphemeralResponse::Fixture do
     context "when the fixture is registered" do
       it "returns the registered fixture" do
         fixture.register
-        EphemeralResponse::Fixture.find_or_initialize(uri, request).should == fixture
+        EphemeralResponse::Fixture.find_or_initialize(uri, request, body).should == fixture
       end
     end
 
@@ -119,7 +132,7 @@ describe EphemeralResponse::Fixture do
 
       it "returns flow back to net/http" do
         2.times do
-          EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+          EphemeralResponse::Fixture.respond_to(fixture.uri, request, body, nil) do
             stub(:body => "")
           end
           EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
@@ -135,7 +148,7 @@ describe EphemeralResponse::Fixture do
         end
 
         it "returns flow to net/http when host is not normalized" do
-          EphemeralResponse::Fixture.respond_to(uri, request, nil) do
+          EphemeralResponse::Fixture.respond_to(uri, request, body, nil) do
             stub(:body => "")
           end
           EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
@@ -147,7 +160,7 @@ describe EphemeralResponse::Fixture do
     context "fixture loaded" do
       it "returns the fixture response" do
         fixture.register
-        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil)
+        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, body, nil)
         response.body.should == "hello world"
       end
 
@@ -155,21 +168,21 @@ describe EphemeralResponse::Fixture do
         fixture.register
         reverse_body = nil
         request_block = lambda {|response| reverse_body = response.body.reverse}
-        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, request_block)
+        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, body, request_block)
         reverse_body.should == response.body.reverse
       end
     end
 
     context "fixture not loaded" do
       it "sets the response to the block" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request, body, nil) do
           stub(:body => "new response")
         end
         EphemeralResponse::Fixture.fixtures[fixture.identifier].response.body.should == "new response"
       end
 
       it "sets @body to the body string" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request, body, nil) do
           stub(:body => :hello_world)
         end
         response = EphemeralResponse::Fixture.fixtures[fixture.identifier].response
@@ -177,7 +190,7 @@ describe EphemeralResponse::Fixture do
       end
 
       it "saves the fixture" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
+        EphemeralResponse::Fixture.respond_to(fixture.uri, request, body, nil) do
           stub(:body => "new response")
         end
         File.exists?(fixture.path).should be_true
@@ -219,11 +232,11 @@ describe EphemeralResponse::Fixture do
   describe "#identifier" do
     let(:request) { Net::HTTP::Get.new '/?foo=bar' }
     let(:uri) { URI.parse "http://example.com/" }
-    subject { EphemeralResponse::Fixture.new uri, request }
+    subject { EphemeralResponse::Fixture.new uri, request, body }
 
     context "without a registration for the host" do
       it "hashes the uri_identifier with method and the post body" do
-        Digest::SHA1.should_receive(:hexdigest).with("#{subject.uri_identifier}#{request.method}#{request.body}")
+        Digest::SHA1.should_receive(:hexdigest).with("#{subject.uri_identifier}#{request.method}#{request.body}#{body}")
         subject.identifier
       end
     end

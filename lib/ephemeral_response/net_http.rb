@@ -23,7 +23,7 @@ module Net
 
     def request(request, body = nil, &block)
       generate_uri(request)
-      EphemeralResponse::Fixture.respond_to(uri, request, block) do
+      EphemeralResponse::Fixture.respond_to(uri, request, body, block) do
         do_start_with_ephemeral_response
         request_without_ephemeral_response(request, body, &block)
       end

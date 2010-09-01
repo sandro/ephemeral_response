@@ -4,6 +4,19 @@ describe Net::HTTP do
   subject { Net::HTTP.new('example.com') }
   let(:request) { Net::HTTP::Get.new("/foo?q=1") }
   let(:uri) { URI.parse("http://example.com/foo?q=1") }
+  let(:body) { <<-XML }
+    <?xml version="1.0" encoding="utf-8" ?>
+    <env:Envelope
+       xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+      <env:Header>
+      </env:Header>
+      <env:Body>
+        <getClientAccounts xmlns="https://adwords.google.com/api/adwords/v13"></getClientAccounts>
+      </env:Body>
+    </env:Envelope>
+    XML
   let(:response) { OpenStruct.new(:body => "Hello") }
 
   before do
@@ -63,7 +76,7 @@ describe Net::HTTP do
 
     context "fixture exists" do
       before do
-        fixture = EphemeralResponse::Fixture.new(uri, request) do |f|
+        fixture = EphemeralResponse::Fixture.new(uri, request, body) do |f|
           f.response = response
         end
         fixture.register
@@ -75,12 +88,12 @@ describe Net::HTTP do
 
       it "does not connect" do
         subject.should_not_receive(:connect_without_ephemeral_response)
-        subject.request(request)
+        subject.request(request, body)
       end
 
       it "does not call #request_without_ephemeral_response" do
         subject.should_not_receive(:request_without_ephemeral_response).with(request, nil).and_return(response)
-        subject.request(request)
+        subject.request(request, body)
       end
 
       it "yields the response to the block" do
