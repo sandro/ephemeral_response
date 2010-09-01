@@ -1,4 +1,5 @@
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
+require 'rubygems'
 require 'net/https'
 require 'ephemeral_response'
 require 'fakefs/safe'
