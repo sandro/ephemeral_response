@@ -8,7 +8,7 @@ History
 
 * Net::HTTP.request now yields the response when a fixture exists
 * Net::HTTPResponse#read\_body works when a fixture exists
-* OpenURI compatibility (it depends on #read_body)
+* OpenURI compatibility (it depends on #read\_body)
 
 0.3.1 / 2010-06-29
 --------------
@@ -23,7 +23,7 @@ History
 #### Enhancements
 
 * Periods no longer replaced with slashes in fixture names.
-* Added skip_expiration option allowing fixtures to never expire.
+* Added skip\expiration option allowing fixtures to never expire.
 
 0.2.0 / 2010-06-23
 --------------
