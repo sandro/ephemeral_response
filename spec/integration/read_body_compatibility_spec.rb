@@ -18,8 +18,12 @@ describe "Read Body Compatibility" do
     Net::HTTP::Get.new '/'
   end
 
-  def send_request(req, data=nil)
-    http.start {|h| h.request(req, data) }
+  def new_post
+    Net::HTTP::Post.new('/')
+  end
+
+  def send_request(req, body=nil)
+    http.start {|h| h.request(req, body) }
   end
 
   context "open-uri" do
@@ -45,12 +49,16 @@ describe "Read Body Compatibility" do
 
   context "Net::HTTP.post" do
     it "generates a fixture, then uses the fixture" do
-      post = Net::HTTP::Post.new('/')
+      post = new_post
+      post.body = 'foo=bar'
+
       real_response = nil
       http.post('/', 'foo=bar') {|s| real_response = s}
+
       fixture = EphemeralResponse::Fixture.find(uri, post)
       File.exists?(fixture.path).should be_true
-      fixture_response = send_request(post, 'foo=bar').body
+
+      fixture_response = send_request(new_post, 'foo=bar').body
       real_response.should == fixture_response
     end
   end

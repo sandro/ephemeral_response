@@ -11,6 +11,7 @@ module UniqueRequests
     post_with_body
     post_with_data_and_query_string
     post_with_data_and_query_string_and_basic_auth
+    post_with_manual_request_body
   )
 
   def uri
@@ -23,15 +24,20 @@ module UniqueRequests
 
   def set_up_responses
     VARIATIONS.each do |request|
-      responses[request] = send(request)
+      response = send(request)
+      if responses.values.include?(response)
+        fail "Duplicate response for #{request.inspect}"
+      else
+        responses[request] = response
+      end
     end
   end
 
-  def perform(request)
+  def perform(request, body=nil)
     http = Net::HTTP.new uri.host, uri.port
     # http.set_debug_output $stdout
     http.start do |http|
-      http.request(request)
+      http.request(request, body)
     end
   end
 
@@ -68,21 +74,25 @@ module UniqueRequests
 
   def post_with_body
     request = Net::HTTP::Post.new('/')
-    request.body = 'hi=there'
+    request.body = 'post_with=body'
     perform request
   end
 
   def post_with_data_and_query_string
     request = Net::HTTP::Post.new('/?foo=bar')
-    request.set_form_data 'hi' => 'there'
+    request.set_form_data 'post_with' => 'data_and_query_string'
     perform request
   end
 
   def post_with_data_and_query_string_and_basic_auth
     request = Net::HTTP::Post.new('/?foo=bar')
     request.basic_auth 'user', 'password'
-    request.set_form_data 'hi' => 'there'
+    request.set_form_data 'post_with' => 'data_and_query_string_and_basic_auth'
     perform request
+  end
+
+  def post_with_manual_request_body
+    perform Net::HTTP::Post.new('/'), 'post_with=manual_request_body'
   end
 
 end
