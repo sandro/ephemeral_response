@@ -1,12 +1,21 @@
 History
 =======
 
+0.3.3 / (master)
+----------------
+
+#### Bug Fix
+
+* Net::HTTP#request now respects the body parameter. When the body parameter is
+  passed in, it will be set on the request (like normal) making it available
+  for identification of the fixture. (bernerdschaefer, veezus)
+
 0.3.2 / 2010-07-30
 ------------------
 
 #### Bug Fix
 
-* Net::HTTP.request now yields the response when a fixture exists
+* Net::HTTP#request now yields the response when a fixture exists
 * Net::HTTPResponse#read\_body works when a fixture exists
 * OpenURI compatibility (it depends on #read\_body)
 
