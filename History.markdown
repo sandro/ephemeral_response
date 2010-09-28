@@ -6,9 +6,11 @@ History
 
 #### Bug Fix
 
-* Net::HTTP#request now respects the body parameter. When the body parameter is
-  passed in, it will be set on the request (like normal) making it available
-  for identification of the fixture. (bernerdschaefer, veezus)
+* Net::HTTP#request now respects the body parameter. When the body
+  parameter is passed in, it will be set on the request (like normal)
+  making it available for identification of the fixture. (bernerdschaefer,
+  veezus)
+* Force removal of expired fixtures to overcome missing file exception
 
 0.3.2 / 2010-07-30
 ------------------
