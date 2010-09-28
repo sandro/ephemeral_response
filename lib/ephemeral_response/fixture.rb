@@ -33,7 +33,7 @@ module EphemeralResponse
 
     def self.register(fixture)
       if fixture.expired?
-        FileUtils.rm fixture.path
+        FileUtils.rm_f fixture.path
       else
         fixtures[fixture.identifier] = fixture
       end
