@@ -30,6 +30,14 @@ module EphemeralResponse
     end
   end
 
+  # FIXME: Don't deactivate and reactivate, instead set a flag which ignores
+  # fixtures entirely.
+  def self.live
+    deactivate
+    yield
+    activate
+  end
+
   def self.fixtures
     Fixture.fixtures
   end
