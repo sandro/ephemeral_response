@@ -17,6 +17,11 @@ module EphemeralResponse
     Fixture.load_all
   end
 
+  def self.configure
+    yield Configuration if block_given?
+    Configuration
+  end
+
   def self.deactivate
     Net::HTTP.class_eval do
       remove_method(:generate_uri) if method_defined?(:generate_uri)
@@ -30,20 +35,15 @@ module EphemeralResponse
     end
   end
 
+  def self.fixtures
+    Fixture.fixtures
+  end
+
   # FIXME: Don't deactivate and reactivate, instead set a flag which ignores
   # fixtures entirely.
   def self.live
     deactivate
     yield
     activate
-  end
-
-  def self.fixtures
-    Fixture.fixtures
-  end
-
-  def self.configure
-    yield Configuration if block_given?
-    Configuration
   end
 end
