@@ -12,6 +12,11 @@ History
   veezus)
 * Force removal of expired fixtures to overcome missing file exception
 
+#### Enhancements
+
+* EphemeralResponse.fixture_set allows you to keep named groups of fixtures. By
+  default, this is nil (also :default).
+
 0.3.2 / 2010-07-30
 ------------------
 
