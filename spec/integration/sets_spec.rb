@@ -17,6 +17,15 @@ describe "Sets" do
         Dir.glob("#{EphemeralResponse::Configuration.fixture_directory}/*").size.should == 1
       end
     end
+
+    it "restores the fixture" do
+      clear_fixtures
+      body = nil
+      EphemeralResponse::RackReflector.while_running do
+        body = http.start {|h| h.request(get) }
+      end
+      http.start {|h| h.request(get) }.should == body
+    end
   end
 
   context "named set" do
@@ -53,13 +62,13 @@ describe "Sets" do
     end
 
     it "reads the fixture back from the set directory" do
+      body = nil
       EphemeralResponse::RackReflector.while_running do
         EphemeralResponse.fixture_set = name
-        http.start {|h| h.request(get) }
+        body = http.start {|h| h.request(get) }
         EphemeralResponse::Fixture.fixtures.should_not be_empty
-        File.exists?("#{EphemeralResponse::Configuration.fixture_directory}/#{name}").should be_true
-        Dir.glob("#{EphemeralResponse::Configuration.fixture_directory}/#{name}/*").size.should == 1
       end
+      http.start {|h| h.request(get) }.should == body
     end
   end
 end
