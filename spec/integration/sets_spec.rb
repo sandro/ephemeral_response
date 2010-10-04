@@ -22,14 +22,6 @@ describe "Sets" do
   context "named set" do
     let(:name) { 'name' }
 
-    before do
-      EphemeralResponse.activate
-    end
-
-    after do
-      EphemeralResponse::Configuration.reset
-    end
-
     describe "#fixture_set=" do
       it "unloads the existing fixtures" do
         EphemeralResponse::RackReflector.while_running do
