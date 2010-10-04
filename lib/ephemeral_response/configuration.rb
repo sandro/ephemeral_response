@@ -2,14 +2,14 @@ module EphemeralResponse
   module Configuration
     extend self
 
-    attr_accessor :current_set
+    attr_accessor :fixture_set
     attr_writer :fixture_directory, :skip_expiration
 
     def effective_directory
-      if current_set.nil? or current_set.to_s == 'default'
+      if fixture_set.nil? or fixture_set.to_s == 'default'
         fixture_directory
       else
-        File.join(fixture_directory, current_set.to_s)
+        File.join(fixture_directory, fixture_set.to_s)
       end
     end
 
@@ -37,7 +37,7 @@ module EphemeralResponse
     end
 
     def reset
-      @current_set = nil
+      @fixture_set = nil
       @expiration = nil
       @fixture_directory = nil
       @white_list = nil

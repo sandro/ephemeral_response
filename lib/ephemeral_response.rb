@@ -22,12 +22,12 @@ module EphemeralResponse
     Configuration
   end
 
-  def self.current_set
-    Configuration.current_set
+  def self.fixture_set
+    Configuration.fixture_set
   end
 
-  def self.current_set=(name)
-    Configuration.current_set = name
+  def self.fixture_set=(name)
+    Configuration.fixture_set = name
     Fixture.load_all
   end
 

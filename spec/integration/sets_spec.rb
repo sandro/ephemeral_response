@@ -30,29 +30,29 @@ describe "Sets" do
       EphemeralResponse::Configuration.reset
     end
 
-    describe "#current_set=" do
+    describe "#fixture_set=" do
       it "unloads the existing fixtures" do
         EphemeralResponse::RackReflector.while_running do
           http.start {|h| h.request(get) }
-          EphemeralResponse.current_set = name
+          EphemeralResponse.fixture_set = name
           EphemeralResponse::Fixture.fixtures.should be_empty
         end
       end
 
       it "reloads any existing fixtures for the set" do
         EphemeralResponse::RackReflector.while_running do
-          EphemeralResponse.current_set = name
+          EphemeralResponse.fixture_set = name
           http.start {|h| h.request(get) }
         end
-        EphemeralResponse.current_set = :default
-        EphemeralResponse.current_set = name
+        EphemeralResponse.fixture_set = :default
+        EphemeralResponse.fixture_set = name
         EphemeralResponse::Fixture.find(uri, get).should be
       end
     end
 
     it "saves one fixture to the set directory only" do
       EphemeralResponse::RackReflector.while_running do
-        EphemeralResponse.current_set = name
+        EphemeralResponse.fixture_set = name
         http.start {|h| h.request(get) }
         EphemeralResponse::Fixture.fixtures.should_not be_empty
         File.exists?("#{EphemeralResponse::Configuration.fixture_directory}/#{name}").should be_true
@@ -62,7 +62,7 @@ describe "Sets" do
 
     it "reads the fixture back from the set directory" do
       EphemeralResponse::RackReflector.while_running do
-        EphemeralResponse.current_set = name
+        EphemeralResponse.fixture_set = name
         http.start {|h| h.request(get) }
         EphemeralResponse::Fixture.fixtures.should_not be_empty
         File.exists?("#{EphemeralResponse::Configuration.fixture_directory}/#{name}").should be_true

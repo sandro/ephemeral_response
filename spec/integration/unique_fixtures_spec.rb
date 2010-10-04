@@ -101,7 +101,7 @@ describe "Unique fixtures generated for the following requests" do
   include UniqueRequests
 
   before :all do
-    EphemeralResponse.current_set = :name
+    EphemeralResponse.fixture_set = :name
     EphemeralResponse.activate
     clear_fixtures
     EphemeralResponse::RackReflector.while_running do
@@ -110,7 +110,7 @@ describe "Unique fixtures generated for the following requests" do
   end
 
   before do
-    EphemeralResponse.current_set = :name
+    EphemeralResponse.fixture_set = :name
   end
 
   UniqueRequests::VARIATIONS.each do |request|

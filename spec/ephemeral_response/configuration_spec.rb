@@ -3,15 +3,15 @@ require 'spec_helper'
 describe EphemeralResponse::Configuration do
   subject { EphemeralResponse::Configuration }
 
-  describe "#current_set" do
+  describe "#fixture_set" do
     let(:name) { 'name' }
 
-    subject { EphemeralResponse::Configuration.current_set }
+    subject { EphemeralResponse::Configuration.fixture_set }
 
     it { should be_nil }
 
     it "can be overwritten" do
-      EphemeralResponse::Configuration.current_set = name
+      EphemeralResponse::Configuration.fixture_set = name
       should == name
     end
   end
@@ -32,19 +32,19 @@ describe EphemeralResponse::Configuration do
       subject.effective_directory.should == "spec/fixtures/ephemeral_response"
     end
 
-    context "with a current_set" do
+    context "with a fixture_set" do
       before do
         subject.fixture_directory = "test/fixtures/ephemeral_response"
-        subject.current_set = :setname
+        subject.fixture_set = :setname
       end
 
-      it "adds the current_set to the fixture directory" do
+      it "adds the fixture_set to the fixture directory" do
         subject.effective_directory.should == "test/fixtures/ephemeral_response/setname"
       end
 
       context "that has been reset to the default" do
         before do
-          subject.current_set = :default
+          subject.fixture_set = :default
         end
 
         it "resets to the fixture directory" do
