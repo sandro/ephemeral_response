@@ -9,15 +9,21 @@ Dir.glob("spec/support/*.rb") {|f| require File.expand_path(f, '.')}
 
 Spec::Runner.configure do |config|
   config.include ClearFixtures
+
   config.before(:suite) do
     ClearFixtures.clear_fixtures
   end
-  config.before(:each) do
-    EphemeralResponse::Configuration.reset
-    EphemeralResponse.activate
-  end
+
   config.after(:suite) do
     EphemeralResponse.deactivate
     ClearFixtures.clear_fixtures
+  end
+
+  config.before(:each) do
+    EphemeralResponse.activate
+  end
+
+  config.after(:each) do
+    EphemeralResponse::Configuration.reset
   end
 end
