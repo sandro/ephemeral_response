@@ -28,7 +28,7 @@ module EphemeralResponse
 
   def self.current_set=(name)
     Configuration.current_set = name
-    Fixture.clear
+    Fixture.load_all
   end
 
   def self.deactivate

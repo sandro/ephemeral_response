@@ -38,6 +38,16 @@ describe "Sets" do
           EphemeralResponse::Fixture.fixtures.should be_empty
         end
       end
+
+      it "reloads any existing fixtures for the set" do
+        EphemeralResponse::RackReflector.while_running do
+          EphemeralResponse.current_set = name
+          http.start {|h| h.request(get) }
+        end
+        EphemeralResponse.current_set = :default
+        EphemeralResponse.current_set = name
+        EphemeralResponse::Fixture.find(uri, get).should be
+      end
     end
 
     it "saves one fixture to the set directory only" do

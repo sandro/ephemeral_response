@@ -42,11 +42,11 @@ describe EphemeralResponse::Fixture do
       let(:dir) { "#{fixture_directory}/name" }
 
       before do
+        EphemeralResponse.current_set = :name
         FileUtils.mkdir_p dir
         Dir.chdir(dir) do
           FileUtils.touch %w(1.yml 2.yml)
         end
-        EphemeralResponse.current_set = :name
       end
 
       it "calls #load_fixture for each fixture file" do
