@@ -97,20 +97,15 @@ module UniqueRequests
 
 end
 
-describe "Unique fixtures generated for the following requests" do
+describe "Repeated requests properly reloaded" do
   include UniqueRequests
 
   before :all do
-    EphemeralResponse.fixture_set = :name
     EphemeralResponse.activate
     clear_fixtures
     EphemeralResponse::RackReflector.while_running do
       set_up_responses
     end
-  end
-
-  before do
-    EphemeralResponse.fixture_set = :name
   end
 
   UniqueRequests::VARIATIONS.each do |request|
@@ -159,6 +154,16 @@ describe "Unique fixtures generated for the following requests" do
       end
 
       http.request(get).body.should == EphemeralResponse::Fixture.find(http.uri, get).response.body
+    end
+  end
+
+  context "when changing the fixture set" do
+    it "attempts to access the server which is not available" do
+      EphemeralResponse.fixture_set = :server_down
+      expect do
+        simple_get
+      end.to raise_exception(Errno::ECONNREFUSED, /connection refused/i)
+      EphemeralResponse.fixture_set = :default
     end
   end
 end
