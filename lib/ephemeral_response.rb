@@ -22,6 +22,15 @@ module EphemeralResponse
     Configuration
   end
 
+  def self.current_set
+    Configuration.current_set
+  end
+
+  def self.current_set=(name)
+    Configuration.current_set = name
+    Fixture.clear
+  end
+
   def self.deactivate
     Net::HTTP.class_eval do
       remove_method(:generate_uri) if method_defined?(:generate_uri)
