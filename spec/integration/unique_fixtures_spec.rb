@@ -108,10 +108,6 @@ describe "Unique fixtures generated for the following requests" do
     end
   end
 
-  after :all do
-    EphemeralResponse::RackReflector.stop
-  end
-
   UniqueRequests::VARIATIONS.each do |request|
     it "restores the correct response from the fixture" do
       send(request).body.should == responses[request].body
