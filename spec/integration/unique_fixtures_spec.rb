@@ -101,11 +101,16 @@ describe "Unique fixtures generated for the following requests" do
   include UniqueRequests
 
   before :all do
+    EphemeralResponse.current_set = :name
     EphemeralResponse.activate
     clear_fixtures
     EphemeralResponse::RackReflector.while_running do
       set_up_responses
     end
+  end
+
+  before do
+    EphemeralResponse.current_set = :name
   end
 
   UniqueRequests::VARIATIONS.each do |request|
