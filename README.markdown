@@ -93,6 +93,22 @@ An example may help clear this up.
 
 Take a look in `examples/custom_cache_key.rb` to see this in action.
 
+## Grouping fixtures to isolate responses
+
+Occasionally you are in a situation where you are making the same request but
+you are expecting a different result, for example, a list of all resources,
+create a new resource, and then list them again. For this scenario, you can use
+a 'newly_created' fixture set. In your specs, change the fixture set to
+'newly_created' for the create and second list requests. The default fixture
+set is named :default (or nil).
+
+    # pseudo code
+    get('http://example.com/books').should_not contain('The Illiad')
+    EphemeralResponse.fixture_set = :newly_created
+    post('http://example.com/books', {:title => 'The Illiad'})
+    get('http://example.com/books').should contain('The Illiad')
+    EphemeralResponse.fixture_set = :default
+
 ## Configuration
 
 Change the fixture directory; defaults to "spec/fixtures/ephemeral\_response"
@@ -113,6 +129,7 @@ method `one_day`
 Never let fixtures expire by setting skip\_expiration to true.
 
     EphemeralResponse::Configuration.skip_expiration = true
+
 
 ### Selenium Tip
 
