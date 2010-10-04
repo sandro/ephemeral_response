@@ -17,8 +17,8 @@ module EphemeralResponse
 
     def self.load_all
       clear
-      if File.directory?(Configuration.fixture_directory)
-        Dir.glob("#{Configuration.fixture_directory}/*.yml", &method(:load_fixture))
+      if File.directory?(Configuration.effective_directory)
+        Dir.glob("#{Configuration.effective_directory}/*.yml", &method(:load_fixture))
       end
       fixtures
     end
@@ -87,7 +87,7 @@ module EphemeralResponse
     end
 
     def path
-      File.join(Configuration.fixture_directory, file_name)
+      File.join(Configuration.effective_directory, file_name)
     end
 
     def register
@@ -98,7 +98,7 @@ module EphemeralResponse
     end
 
     def save
-      FileUtils.mkdir_p Configuration.fixture_directory
+      FileUtils.mkdir_p Configuration.effective_directory
       File.open(path, 'w') do |f|
         f.write to_yaml
       end

@@ -23,7 +23,7 @@ describe EphemeralResponse::Fixture do
       EphemeralResponse::Fixture.load_all
     end
 
-    context "fixture files exist" do
+    context "default set fixture files exist" do
       before do
         FileUtils.mkdir_p fixture_directory
         Dir.chdir(fixture_directory) do
@@ -34,6 +34,24 @@ describe EphemeralResponse::Fixture do
       it "calls #load_fixture for each fixture file" do
         EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{fixture_directory}/1.yml")
         EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{fixture_directory}/2.yml")
+        EphemeralResponse::Fixture.load_all
+      end
+    end
+
+    context "fixture files exist for the set" do
+      let(:dir) { "#{fixture_directory}/name" }
+
+      before do
+        FileUtils.mkdir_p dir
+        Dir.chdir(dir) do
+          FileUtils.touch %w(1.yml 2.yml)
+        end
+        EphemeralResponse.current_set = :name
+      end
+
+      it "calls #load_fixture for each fixture file" do
+        EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{dir}/1.yml")
+        EphemeralResponse::Fixture.should_receive(:load_fixture).with("#{dir}/2.yml")
         EphemeralResponse::Fixture.load_all
       end
     end
