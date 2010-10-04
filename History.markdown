@@ -4,7 +4,7 @@ History
 0.3.3 / (master)
 ----------------
 
-#### Bug Fix
+#### Fixes
 
 * Net::HTTP#request now respects the body parameter. When the body
   parameter is passed in, it will be set on the request (like normal)
@@ -20,7 +20,7 @@ History
 0.3.2 / 2010-07-30
 ------------------
 
-#### Bug Fix
+#### Fixes
 
 * Net::HTTP#request now yields the response when a fixture exists
 * Net::HTTPResponse#read\_body works when a fixture exists
