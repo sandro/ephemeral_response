@@ -130,6 +130,10 @@ Never let fixtures expire by setting skip\_expiration to true.
 
     EphemeralResponse::Configuration.skip_expiration = true
 
+Print debugging information
+
+    EphemeralResponse::Configuration.debug_output = $stderr
+
 
 ### Selenium Tip
 
@@ -146,6 +150,7 @@ the local server.
       config.expiration = lambda { one_day * 30 }
       config.skip_expiration = true
       config.white_list = 'localhost'
+      config.debug_output = $stderr
     end
 
 ## Similar Projects

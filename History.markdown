@@ -11,11 +11,15 @@ History
   making it available for identification of the fixture. (bernerdschaefer,
   veezus)
 * Force removal of expired fixtures to overcome missing file exception
+* Handle fixture load failures by output errant fixture file to debug output
+
 
 #### Enhancements
 
 * EphemeralResponse.fixture_set allows you to keep named groups of fixtures. By
   default, this is nil (also :default).
+* EphemeralResponse::Configuration.debug_output prints debugging information to
+  the provided IO object
 
 0.3.2 / 2010-07-30
 ------------------
