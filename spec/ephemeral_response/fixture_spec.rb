@@ -63,6 +63,11 @@ describe EphemeralResponse::Fixture do
       EphemeralResponse::Fixture.load_fixture(fixture.path)
       EphemeralResponse::Fixture.fixtures.should have_key(fixture.identifier)
     end
+
+    it "handles empty yaml files" do
+      FileUtils.touch '3.yml'
+      EphemeralResponse::Fixture.load_fixture('3.yml').should be_nil
+    end
   end
 
   describe ".register" do

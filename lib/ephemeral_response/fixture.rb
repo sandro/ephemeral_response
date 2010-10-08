@@ -24,7 +24,11 @@ module EphemeralResponse
     end
 
     def self.load_fixture(file_name)
-      register YAML.load_file(file_name)
+      if fixture = YAML.load_file(file_name)
+        register fixture
+      else
+        EphemeralResponse::Configuration.debug_output.puts "EphemeralResponse couldn't load fixture: #{file_name}"
+      end
     end
 
     def self.find_or_initialize(uri, request, &block)
