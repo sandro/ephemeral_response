@@ -10,7 +10,6 @@ module Net
     private :connect
 
     def do_start_with_ephemeral_response
-      D "EphemeralResponse: establishing connection to #{uri}"
       connect_without_ephemeral_response
       @started = true
     end

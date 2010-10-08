@@ -321,6 +321,11 @@ describe EphemeralResponse::Fixture do
         fixture.register
         EphemeralResponse::Fixture.fixtures.should have_key(fixture.identifier)
       end
+
+      it "debugs saving the fixture" do
+        EphemeralResponse::Configuration.debug_output.should_receive(:puts).with(/saving GET request to http:\/\/example.com/)
+        fixture.register
+      end
     end
 
     context "uri is white listed" do
