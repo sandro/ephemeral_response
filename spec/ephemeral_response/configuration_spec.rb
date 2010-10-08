@@ -3,6 +3,30 @@ require 'spec_helper'
 describe EphemeralResponse::Configuration do
   subject { EphemeralResponse::Configuration }
 
+  describe ".debug_output=" do
+    it "raises an exception when the argument isn't an IO object" do
+      expect do
+        subject.debug_output = :foo
+      end.to raise_exception(EphemeralResponse::Error, /must respond to #puts/)
+    end
+
+    it "stores the argument" do
+      subject.debug_output = $stderr
+      subject.instance_variable_get(:@debug_output).should == $stderr
+    end
+  end
+
+  describe ".debug_output" do
+    it "defaults to being off (NullOutput)" do
+      subject.debug_output.should be_instance_of(EphemeralResponse::NullOutput)
+    end
+
+    it "returns the the result of the setter" do
+      subject.debug_output = $stdout
+      subject.debug_output.should == $stdout
+    end
+  end
+
   describe "#fixture_set" do
     let(:name) { 'name' }
 
@@ -121,6 +145,12 @@ describe EphemeralResponse::Configuration do
       subject.register('example.com') {}
       subject.reset
       subject.host_registry.should be_empty
+    end
+
+    it "resets debug_output" do
+      subject.debug_output = $stderr
+      subject.reset
+      subject.debug_output.should be_instance_of(EphemeralResponse::NullOutput)
     end
   end
 

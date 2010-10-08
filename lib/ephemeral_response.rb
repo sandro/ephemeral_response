@@ -7,9 +7,12 @@ require 'yaml'
 require 'ephemeral_response/configuration'
 require 'ephemeral_response/request'
 require 'ephemeral_response/fixture'
+require 'ephemeral_response/null_output'
 
 module EphemeralResponse
   VERSION = "0.3.2".freeze
+
+  Error = Class.new(StandardError)
 
   def self.activate
     deactivate

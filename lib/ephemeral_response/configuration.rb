@@ -17,6 +17,19 @@ module EphemeralResponse
       @fixture_directory || "spec/fixtures/ephemeral_response"
     end
 
+    # Set an IO object to receive the debugging information.
+    def debug_output=(io)
+      if io.respond_to?(:puts)
+        @debug_output = io
+      else
+        raise Error, 'The debug_output object must respond to #puts'
+      end
+    end
+
+    def debug_output
+      @debug_output ||= NullOutput.new
+    end
+
     def expiration=(expiration)
       if expiration.is_a?(Proc)
         expiration = instance_eval &expiration
@@ -43,6 +56,7 @@ module EphemeralResponse
       @white_list = nil
       @skip_expiration = nil
       @host_registry = nil
+      @debug_output = nil
     end
 
     def skip_expiration
