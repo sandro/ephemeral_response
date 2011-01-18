@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ephemeral_response}
-  s.version = "0.3.2"
+  s.version = "0.4.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Sandro Turriate", "Les Hill"]
-  s.date = %q{2010-07-30}
+  s.date = %q{2011-01-18}
   s.description = %q{
     Save HTTP responses to give your tests a hint of reality.
     Responses are saved into your fixtures directory and are used for subsequent web requests until they expire.
@@ -21,6 +21,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".document",
      ".gitignore",
+     ".rvmrc",
      "Gemfile",
      "History.markdown",
      "MIT_LICENSE",
@@ -36,6 +37,7 @@ Gem::Specification.new do |s|
      "lib/ephemeral_response/configuration.rb",
      "lib/ephemeral_response/fixture.rb",
      "lib/ephemeral_response/net_http.rb",
+     "lib/ephemeral_response/null_output.rb",
      "lib/ephemeral_response/request.rb",
      "spec/ephemeral_response/configuration_spec.rb",
      "spec/ephemeral_response/fixture_spec.rb",
@@ -44,6 +46,7 @@ Gem::Specification.new do |s|
      "spec/integration/custom_identifier_spec.rb",
      "spec/integration/normal_flow_spec.rb",
      "spec/integration/read_body_compatibility_spec.rb",
+     "spec/integration/sets_spec.rb",
      "spec/integration/unique_fixtures_spec.rb",
      "spec/integration/white_list_spec.rb",
      "spec/spec.opts",
@@ -66,6 +69,7 @@ Gem::Specification.new do |s|
      "spec/integration/custom_identifier_spec.rb",
      "spec/integration/normal_flow_spec.rb",
      "spec/integration/read_body_compatibility_spec.rb",
+     "spec/integration/sets_spec.rb",
      "spec/integration/unique_fixtures_spec.rb",
      "spec/integration/white_list_spec.rb",
      "spec/spec_helper.rb",
