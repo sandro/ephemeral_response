@@ -1,7 +1,7 @@
 History
 =======
 
-0.4.0 / (master)
+0.4.0 / 2011-01-18
 ----------------
 
 #### Fixes
@@ -16,9 +16,9 @@ History
 
 #### Enhancements
 
-* EphemeralResponse.fixture_set allows you to keep named groups of fixtures. By
+* EphemeralResponse.fixture\_set allows you to keep named groups of fixtures. By
   default, this is nil (also :default).
-* EphemeralResponse::Configuration.debug_output prints debugging information to
+* EphemeralResponse::Configuration.debug\_output prints debugging information to
   the provided IO object
 
 0.3.2 / 2010-07-30
