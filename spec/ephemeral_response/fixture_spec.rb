@@ -323,7 +323,7 @@ describe EphemeralResponse::Fixture do
       end
 
       it "debugs saving the fixture" do
-        EphemeralResponse::Configuration.debug_output.should_receive(:puts).with(/saving GET request to http:\/\/example.com/)
+        EphemeralResponse::Configuration.debug_output.should_receive(:puts).with("GET http://example.com/ saved as #{fixture.path}")
         fixture.register
       end
     end
