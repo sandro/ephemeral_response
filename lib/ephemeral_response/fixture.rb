@@ -75,7 +75,7 @@ module EphemeralResponse
       Digest::SHA1.hexdigest(registered_identifier || default_identifier)
     end
 
-    def method
+    def http_method
       request.method
     end
 
@@ -84,7 +84,7 @@ module EphemeralResponse
     end
 
     def normalized_name
-      [uri.host, method, fs_path].compact.join("_").gsub(/[\/]/, '-')
+      [uri.host, http_method, fs_path].compact.join("_").gsub(/[\/]/, '-')
     end
 
     def fs_path
@@ -127,7 +127,7 @@ module EphemeralResponse
     end
 
     def default_identifier
-      "#{uri_identifier}#{request.method}#{request.body}"
+      "#{uri_identifier}#{http_method}#{request.body}"
     end
 
     def generate_file_name
