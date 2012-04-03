@@ -1,3 +1,5 @@
+require 'net/http'
+
 module Net
   class HTTP
     alias request_without_ephemeral_response request

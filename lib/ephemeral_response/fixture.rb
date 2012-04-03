@@ -1,3 +1,8 @@
+require 'fileutils'
+require 'time'
+require 'digest/sha1'
+require 'yaml'
+
 module EphemeralResponse
   class Fixture
     attr_accessor :response

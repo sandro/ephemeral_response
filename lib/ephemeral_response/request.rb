@@ -1,3 +1,5 @@
+require 'delegate'
+
 module EphemeralResponse
   class Request < SimpleDelegator
     attr_reader :uri
