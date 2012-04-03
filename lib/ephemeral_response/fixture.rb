@@ -24,6 +24,7 @@ module EphemeralResponse
     end
 
     def self.load_fixture(file_name)
+      return unless File.exist?(file_name)
       if fixture = YAML.load_file(file_name)
         register fixture
       else
