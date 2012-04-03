@@ -97,7 +97,7 @@ module EphemeralResponse
 
     def register
       unless Configuration.white_list.include? uri.host
-        EphemeralResponse::Configuration.debug_output.puts "#{request.method} #{uri} saved as #{path}"
+        EphemeralResponse::Configuration.debug_output.puts "#{http_method} #{uri} saved as #{path}"
         save
         self.class.register self
       end
