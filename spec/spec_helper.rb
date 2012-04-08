@@ -3,11 +3,23 @@ require 'net/https'
 require 'ephemeral_response'
 require 'fakefs/safe'
 require 'fakefs/spec_helpers'
-require 'spec/autorun'
+require 'rspec/autorun'
+require 'debugger'
 
 Dir.glob("spec/support/*.rb") {|f| require File.expand_path(f, '.')}
 
-Spec::Runner.configure do |config|
+class Net::HTTPResponse
+  def equality_test
+    [http_version, code, message, body]
+  end
+
+  def ==(other)
+    equality_test == other.equality_test
+  end
+end
+
+RSpec.configure do |config|
+  config.color = true
   config.include ClearFixtures
 
   config.before(:suite) do

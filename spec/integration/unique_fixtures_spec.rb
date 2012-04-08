@@ -35,7 +35,6 @@ module UniqueRequests
 
   def perform(request, body=nil)
     http = Net::HTTP.new uri.host, uri.port
-    # http.set_debug_output $stdout
     http.start do |http|
       http.request(request, body)
     end
@@ -148,12 +147,15 @@ describe "Repeated requests properly reloaded" do
       clear_fixtures
       http = Net::HTTP.new uri.host, uri.port
 
-
       EphemeralResponse::RackReflector.while_running do
         http.request(get)
       end
 
-      http.request(get).body.should == EphemeralResponse::Fixture.find(http.uri, get).response.body
+      fixture_uri = uri.dup
+      fixture_uri.path = get.path
+      body = http.request(get).body
+      fixture_body = EphemeralResponse::Fixture.find(fixture_uri, get).response.body
+      body.should == fixture_body
     end
   end
 

@@ -17,8 +17,8 @@ describe EphemeralResponse::Configuration do
   end
 
   describe ".debug_output" do
-    it "defaults to being off (NullOutput)" do
-      subject.debug_output.should be_instance_of(EphemeralResponse::NullOutput)
+    it "defaults to being off (StringIO)" do
+      subject.debug_output.should be_instance_of(StringIO)
     end
 
     it "returns the the result of the setter" do
@@ -150,7 +150,7 @@ describe EphemeralResponse::Configuration do
     it "resets debug_output" do
       subject.debug_output = $stderr
       subject.reset
-      subject.debug_output.should be_instance_of(EphemeralResponse::NullOutput)
+      subject.debug_output.should be_instance_of(StringIO)
     end
   end
 

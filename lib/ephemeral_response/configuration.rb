@@ -1,3 +1,5 @@
+require 'stringio'
+
 module EphemeralResponse
   module Configuration
     extend self
@@ -27,7 +29,7 @@ module EphemeralResponse
     end
 
     def debug_output
-      @debug_output ||= NullOutput.new
+      @debug_output ||= StringIO.new
     end
 
     def expiration=(expiration)

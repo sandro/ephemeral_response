@@ -8,7 +8,7 @@ describe "Read Body Compatibility" do
     clear_fixtures
   end
 
-  let(:uri) { URI.parse('http://example.com/') }
+  let(:uri) { URI.parse('http://duckduckgo.com/') }
 
   def http
     Net::HTTP.new uri.host, uri.port
@@ -38,12 +38,21 @@ describe "Read Body Compatibility" do
 
   context "Net::HTTP#get" do
     it "generates a fixture, then uses the fixture" do
+      begin
       real_response = nil
-      http.get('/') {|s| real_response = s}
+      http.start do |h|
+        h.request(get) do |r|
+          r.read_body {|s| real_response = s}
+        end
+      end
       fixture = EphemeralResponse::Fixture.find(uri, get)
       File.exists?(fixture.path).should be_true
       fixture_response = send_request(get).body
       real_response.should == fixture_response
+      rescue Exception => e
+        p e
+        puts e.backtrace
+      end
     end
   end
 

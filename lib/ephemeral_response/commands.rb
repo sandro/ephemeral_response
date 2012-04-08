@@ -2,8 +2,24 @@ module EphemeralResponse
   module Commands
     def activate
       deactivate
-      load 'ephemeral_response/net_http.rb'
+      server.start unless server && server.running?
+      ::Net.module_eval do
+        if const_defined?(:HTTP) && !const_defined?(:OHTTP)
+          const_set(:OHTTP, remove_const(:HTTP))
+          const_set(:HTTP, Net::ProxyHTTP)
+        end
+      end
       Fixture.load_all
+    end
+
+    def server
+      @server ||= new_server
+    end
+
+    def new_server
+      s = ProxyServer.new
+      s.cache_service = CacheService.new
+      s
     end
 
     def configure
@@ -21,15 +37,12 @@ module EphemeralResponse
     end
 
     def deactivate
-      Net::HTTP.class_eval do
-        remove_method(:generate_uri) if method_defined?(:generate_uri)
-        remove_method(:uri) if method_defined?(:uri)
-        alias_method(:connect, :connect_without_ephemeral_response) if private_method_defined?(:connect_without_ephemeral_response)
-        alias_method(:request, :request_without_ephemeral_response) if method_defined?(:request_without_ephemeral_response)
-      end
-      Net::HTTPResponse.class_eval do
-        alias_method(:procdest, :procdest_without_ephemeral_response) if private_method_defined?(:procdest_without_ephemeral_response)
-        alias_method(:read_body, :read_body_without_ephemeral_response) if method_defined?(:read_body_without_ephemeral_response)
+      server.stop
+      ::Net.module_eval do
+        if const_defined?(:OHTTP)
+          remove_const(:HTTP)
+          const_set(:HTTP, remove_const(:OHTTP))
+        end
       end
     end
 

@@ -6,9 +6,10 @@ describe EphemeralResponse::Fixture do
   let(:fixture_directory) { File.expand_path EphemeralResponse::Configuration.fixture_directory }
   let(:request) { Net::HTTP::Get.new '/' }
   let(:uri) { URI.parse("http://example.com/") }
+  let(:raw_response) { %(HTTP/1.1 200 OK\r\n\r\nRaw Body\r\n) }
   let(:fixture) do
     EphemeralResponse::Fixture.new(uri, request) do |f|
-      f.response = OpenStruct.new(:body => "hello world")
+      f.raw_response = raw_response
     end
   end
 
@@ -59,7 +60,7 @@ describe EphemeralResponse::Fixture do
 
   describe ".load_fixture" do
     it "loads the yamlized fixture into the fixtures hash" do
-      fixture.save
+      fixture.send :save
       EphemeralResponse::Fixture.load_fixture(fixture.path)
       EphemeralResponse::Fixture.fixtures.should have_key(fixture.identifier)
     end
@@ -123,87 +124,13 @@ describe EphemeralResponse::Fixture do
     context "when the fixture doesn't exist" do
       it "processes the block" do
         EphemeralResponse::Fixture.find_or_initialize(uri, request) do |fixture|
-          fixture.response = "bah"
-        end.response.should == "bah"
+          fixture.raw_response = raw_response
+        end.response.body.should == "Raw Body\r\n"
       end
 
       it "returns the new fixture" do
         fixture = EphemeralResponse::Fixture.find_or_initialize(uri, request)
         EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
-      end
-    end
-  end
-
-  describe ".respond_to" do
-    context "host included in white list" do
-      before do
-        EphemeralResponse::Configuration.white_list = uri.host
-      end
-
-      it "returns flow back to net/http" do
-        2.times do
-          EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
-            stub(:body => "")
-          end
-          EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
-        end
-      end
-
-      context "uri not normalized" do
-        let(:uri) { URI.parse("HtTP://ExaMplE.Com/") }
-        let(:fixture) { EphemeralResponse::Fixture.new(uri, request) }
-
-        before do
-          EphemeralResponse::Configuration.white_list = "example.com"
-        end
-
-        it "returns flow to net/http when host is not normalized" do
-          EphemeralResponse::Fixture.respond_to(uri, request, nil) do
-            stub(:body => "")
-          end
-          EphemeralResponse::Fixture.fixtures[fixture.identifier].should be_nil
-        end
-      end
-
-    end
-
-    context "fixture loaded" do
-      it "returns the fixture response" do
-        fixture.register
-        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil)
-        response.body.should == "hello world"
-      end
-
-      it "yields the response body to the request block" do
-        fixture.register
-        reverse_body = nil
-        request_block = lambda {|response| reverse_body = response.body.reverse}
-        response = EphemeralResponse::Fixture.respond_to(fixture.uri, request, request_block)
-        reverse_body.should == response.body.reverse
-      end
-    end
-
-    context "fixture not loaded" do
-      it "sets the response to the block" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
-          stub(:body => "new response")
-        end
-        EphemeralResponse::Fixture.fixtures[fixture.identifier].response.body.should == "new response"
-      end
-
-      it "sets @body to the body string" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
-          stub(:body => :hello_world)
-        end
-        response = EphemeralResponse::Fixture.fixtures[fixture.identifier].response
-        response.instance_variable_get(:@body).should == "hello_world"
-      end
-
-      it "saves the fixture" do
-        EphemeralResponse::Fixture.respond_to(fixture.uri, request, nil) do
-          stub(:body => "new response")
-        end
-        File.exists?(fixture.path).should be_true
       end
     end
   end
@@ -217,13 +144,6 @@ describe EphemeralResponse::Fixture do
       fixture.uri.should == uri.normalize
     end
 
-    it "duplicates the request" do
-      fixture = subject.new(uri, request)
-      request['something'] = "anything"
-      fixture.request['something'].should be_nil
-      request['something'].should == "anything"
-    end
-
     it "sets created_at to the current time" do
       Time.travel "2010-01-15 10:11:12" do
         fixture = subject.new(uri, request)
@@ -233,9 +153,9 @@ describe EphemeralResponse::Fixture do
 
     it "yields itself" do
       fixture = subject.new(uri, request) do |f|
-        f.response = "yielded self"
+        f.raw_response = raw_response
       end
-      fixture.response.should == "yielded self"
+      fixture.response.body.should == "Raw Body\r\n"
     end
   end
 

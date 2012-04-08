@@ -23,8 +23,6 @@ describe "Normal flow" do
       real_response = send_request(get)
       fixture = EphemeralResponse::Fixture.new(uri, get)
       File.exists?(fixture.path).should be_true
-      Net::HTTP.should_not_receive(:connect_without_ephemeral_response)
-      Net::HTTP.should_not_receive(:request_without_ephemeral_response)
       fixture_response = send_request(get)
       real_response.should == fixture_response
     end
@@ -32,6 +30,7 @@ describe "Normal flow" do
     it "generates a new fixture when the initial fixture expires" do
       send_request(get)
       old_fixture = EphemeralResponse::Fixture.find(uri, get)
+      send_request(get)
       Time.travel((Time.now + EphemeralResponse::Configuration.expiration * 2).to_s) do
         EphemeralResponse::Fixture.load_all
         send_request(get)
@@ -40,8 +39,6 @@ describe "Normal flow" do
       old_fixture.created_at.should < new_fixture.created_at
 
       # use the new fixture
-      Net::HTTP.should_not_receive(:connect_without_ephemeral_response)
-      Net::HTTP.should_not_receive(:request_without_ephemeral_response)
       send_request(get)
     end
 
