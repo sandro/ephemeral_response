@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift("lib")
 require 'rubygems'
-require 'lib/ephemeral_response'
+require './lib/ephemeral_response'
 require 'benchmark'
 
 EphemeralResponse.configure do |config|
@@ -21,7 +21,6 @@ def benchmark_request(number=1)
       http.request(get)
     end
   end
-  sleep 1
   puts "Request #{number} took #{time} secs"
 end
 

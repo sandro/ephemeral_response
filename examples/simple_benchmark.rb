@@ -1,7 +1,7 @@
 $LOAD_PATH.unshift("lib")
 require 'rubygems'
-require 'lib/ephemeral_response'
 require 'benchmark'
+require './lib/ephemeral_response'
 
 EphemeralResponse::Configuration.expiration = 5
 EphemeralResponse.activate

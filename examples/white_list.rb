@@ -1,6 +1,6 @@
 $LOAD_PATH.unshift("lib")
 require 'rubygems'
-require 'lib/ephemeral_response'
+require './lib/ephemeral_response'
 
 # Don't create fixtures for the localhost domain
 EphemeralResponse::Configuration.white_list = 'localhost'
@@ -22,8 +22,7 @@ Net::HTTP.get(uri)
 uri = URI.parse('http://www.google.com/')
 Net::HTTP.get(uri)
 
-puts "The following directory should only contain a fixture for google"
+puts "The directory should not contain a fixture for localhost"
 puts
-listing_cmd = %(ls #{File.expand_path(EphemeralResponse::Configuration.fixture_directory)})
-puts listing_cmd
-puts %x(#{listing_cmd})
+dir = File.expand_path(EphemeralResponse::Configuration.fixture_directory)
+puts %x(set -x; ls -l #{dir})

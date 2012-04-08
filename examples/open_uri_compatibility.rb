@@ -1,5 +1,5 @@
 $LOAD_PATH.unshift("lib")
-require 'lib/ephemeral_response'
+require './lib/ephemeral_response'
 require 'benchmark'
 require 'open-uri'
 
