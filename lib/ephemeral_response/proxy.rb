@@ -260,6 +260,7 @@ module EphemeralResponse
       @ios = []
       @server_thread = []
       @mutex = Mutex.new
+      @certs = {}
       self.port = port || 44567
     end
 
@@ -267,20 +268,55 @@ module EphemeralResponse
       File.expand_path(File.dirname(__FILE__))
     end
 
-    def certificate_path
-      File.join(dir, "certificate.pem")
+    def root_ca
+      @root_ca ||= begin
+        path = File.join(dir, "root.cer")
+        OpenSSL::X509::Certificate.new(File.open(path))
+      end
     end
 
-    def key_path
-      File.join(dir, "key.pem")
+    def root_key
+      @root_key ||= begin
+        path = File.join(dir, "rootkey.pem")
+        OpenSSL::PKey::RSA.new(File.open(path))
+      end
     end
 
-    def ssl_sock(sock)
+    def make_or_get_cert_for(host)
+      @certs[host] ||= make_cert_for(host)
+    end
+
+    def make_cert_for(host)
+      puts "making cert for #{host}"
+      key = OpenSSL::PKey::RSA.new 2048
+      cert = OpenSSL::X509::Certificate.new
+      cert.version = 2
+      cert.serial = Integer(rand * 1_000_000)
+      cert.subject = OpenSSL::X509::Name.parse "/DC=org/DC=ruby-lang/CN=#{host}"
+      cert.issuer = root_ca.subject # root CA is the issuer
+      cert.public_key = key.public_key
+      cert.not_before = Time.now - 60
+      cert.not_after = cert.not_before + 1 * 365 * 24 * 60 * 60 # 1 years validity
+      ef = OpenSSL::X509::ExtensionFactory.new
+      ef.subject_certificate = cert
+      ef.issuer_certificate = root_ca
+      cert.add_extension(ef.create_extension("subjectKeyIdentifier","hash",false))
+      cert.add_extension(ef.create_extension("extendedKeyUsage", "serverAuth"))
+      cert.add_extension(ef.create_extension("basicConstraints","CA:FALSE"))
+      cert.add_extension(ef.create_extension("keyUsage", "keyEncipherment"))
+      cert.sign(root_key, OpenSSL::Digest::SHA1.new)
+      [cert, key]
+    end
+
+    def ssl_sock(sock, host)
+      cert, key = make_or_get_cert_for(host)
       context = OpenSSL::SSL::SSLContext.new
-      context.cert = OpenSSL::X509::Certificate.new(File.open(certificate_path))
-      context.key = OpenSSL::PKey::RSA.new(File.open(key_path))
+      context.cert = cert
+      context.key = key
       ssl = OpenSSL::SSL::SSLSocket.new(sock, context)
       ssl.sync_close = true
+      ssl.extend SSLTunnel
+      ssl.tunnel_host = host
       ssl
     end
 
@@ -335,9 +371,7 @@ module EphemeralResponse
           s.print(str) unless s.closed?
         end
         if request.ssl_tunnel?
-          ssl = ssl_sock(s)
-          ssl.extend SSLTunnel
-          ssl.tunnel_host = request.host
+          ssl = ssl_sock(s, request.host)
           mutex.synchronize { ios << ssl }
         else
           s.close
